@@ -1,17 +1,9 @@
-class MovableObject {
-    x = 120;   // Wie weit!
-    y = 320;    // Wie hoch!
-    img;       // Bild
-    height = 150; // Höhe
-    width = 100; // Breite
-    imageCache = {};
-    currentImage = 0;
+class MovableObject extends DrawableObject{
     speed = 0.2;
     otherDirection = false;
     speedY = 0;
     acceleration = 1;
     energy = 100;
-
     lastHit = 0;
 
 
@@ -25,27 +17,14 @@ class MovableObject {
     }
 
     isAboveGround() {
-        return this.y < 278;
-    }
-
-    loadImage(path) {
-        this.img = new Image();
-        this.img.src = path;
-    }
-
-    draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    }
-
-    drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Chicken) {
-            ctx.beginPath();
-            ctx.lineWidth = '2';
-            ctx.strokeStyle = 'blue';
-            ctx.rect(this.x, this.y, this.width, this.height);
-            ctx.stroke();
+        if (this instanceof ThrowableObject) {
+            return true;
+        } else {
+            return this.y < 278;
         }
     }
+
+ 
 
     isColliding(mo) {
         return this.x + this.width > mo.x &&
@@ -79,14 +58,6 @@ class MovableObject {
     //         (this.y + this.offsetY) <= (mo.y + mo.height);
     // }
 
-    loadImages(arr) {
-        arr.forEach((path) => {
-            let img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
-        });
-    }
-
     playAnimation(images) {
         let i = this.currentImage % images.length;
         let path = images[i];
@@ -105,8 +76,6 @@ class MovableObject {
     jump() {
         this.speedY = 20;
     }
-
-    
 }
 
 

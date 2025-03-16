@@ -9,15 +9,19 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <script src="models/drawable-object.class.js"></script>
     <script src="models/movable-object.class.js"></script>
     <script src="models/background-object.class.js"></script>
     <script src="models/character.class.js"></script>
     <script src="models/chicken.class.js"></script>
     <script src="models/clouds.class.js"></script>
+    <script src="models/status-bar.class.js"></script>
+    <script src="models/status-bar-coin.class.js"></script>
     <script src="models/world.class.js"></script>
     <script src="models/keyboard.class.js"></script>
-    <script src="models/endboss.class.js"></script>
     <script src="models/level.class.js"></script>
+    <script src="models/throwable-object.class.js"></script>
+    <script src="models/endboss.class.js"></script>
     <script src="levels/level1.js"></script>
     <script src="js/game.js"></script>
 
@@ -27,14 +31,33 @@
 
 
 <body onload="init()">
+    <div class="container">
 
-    <h1>El pollo loco</h1>
+        <h1 class="title">El pollo loco</h1>
 
-    <canvas id="canvas" width="720" height="480">
+        <canvas id="canvas" width="720" height="480">
+        </canvas>
+        <div class="controls">
+            <div id="hud">
+                <div class="panelMain">
+                    <button id="muteMusicButton" onclick="toggleMusic()">Mute</button>
+                    <button id="playGame" onclick="playGame()">Play</button>
+                    <button id="buttonView" onclick="toggleView()">View</button>
+                </div>
+                <div class="panel">
+                    <div id="panel-wrapper">
+                        <button id="btnLeft" onclick="moveLeft()">&lt;</button>
+                        <button id="btnRight" onclick="moveRight()">&gt;</button>
+                    </div>
+                    <div id="panel-wrapper">
+                        <button id="btnJump" onclick="jump()">&uarr;</button>
+                        <button id="btnThrow" onclick="throwObject()">&dagger;</button>
+                    </div>
+                </div>
+            </div>
 
-
-    </canvas>
-
+        </div>
+    </div>
 </body>
 
 </html>
