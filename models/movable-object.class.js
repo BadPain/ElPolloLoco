@@ -6,7 +6,6 @@ class MovableObject extends DrawableObject{
     energy = 100;
     lastHit = 0;
 
-
     applyGravity() {
         setInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
@@ -24,17 +23,15 @@ class MovableObject extends DrawableObject{
         }
     }
 
- 
-
     isColliding(mo) {
         return this.x + this.width > mo.x &&
             this.y + this.height > mo.y &&
-            this.x < mo.y &&
+            this.x < mo.x + mo.width &&
             this.y < mo.y + mo.height;
     }
 
     hit() {
-        this.energy -= 5;
+        this.energy -= 20;
         if (this.energy < 0) {
             this.energy = 0;
         } else {

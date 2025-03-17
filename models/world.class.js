@@ -8,7 +8,14 @@ class World {
     camera_x = 0;
     statusBar = new StatusBar();
     throwableObjects = [];
-    coin = new Coin();
+    coinBar = new CoinBar();
+    bottleBar = new BottleBar();
+    coins = [];
+    bottles = [];
+    collectedCoin = 0;
+    totalCoins = 5;
+    collectedBottles = 0;
+    totalBottles = 5;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -17,6 +24,10 @@ class World {
         this.draw();
         this.setWorld();
         this.run();
+        this.addCoins();
+        this.addBottles();
+        this.coinBar.totalCoins = 5;
+        this.bottleBar.totalBottles = 5;
     }
 
     setWorld() {
@@ -25,12 +36,35 @@ class World {
 
     run() {
         setInterval(() => {
-
             this.checkCollisions();
             this.checkThrowObjects();
+            this.checkCollectCoins();
+            this.checkCollectBottles();
         }, 200);
     }
-    
+
+    addCoins() {
+        for (let i = 0; i < 5; i++) {
+            let x = -500 + Math.random() * 2500;
+            let y = 200 + Math.random() * 100;
+            let coin = new Coin();
+            coin.x = x;
+            coin.y = y;
+            this.coins.push(coin);
+        }
+    }
+
+    addBottles() {
+        for (let i = 0; i < 10; i++) {
+            let x = -500 + Math.random() * 2500;
+            let y = 200 + Math.random() * 100;
+            let bottle = new Bottles();
+            bottle.x = x;
+            bottle.y = y;
+            this.bottles.push(bottle);
+        }
+    }
+
     checkCollisions() {
         this.level.enemies.forEach(enemy => {
             if (this.character.isColliding(enemy)) {
@@ -40,14 +74,51 @@ class World {
         });
     }
 
+    checkCollectCoins() {
+        this.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                this.collectCoin(coin);
+                console.log('Coin collected');
+            }
+        });
+    }
+
+    checkCollectBottles() {
+        this.bottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle)) {
+                this.collectBottle(bottle);
+                console.log('Bottle collected');
+            }
+        });
+    }
+
+    collectCoin(coin) {
+        let index = this.coins.indexOf(coin);
+        if (index > -1) {
+            this.coins.splice(index, 1);
+            this.coinBar.setPercentage(5 - this.coins.length, 5);
+            console.log('Coin deleted');
+        }
+    }
+
+    collectBottle(bottle) {
+        let index = this.bottles.indexOf(bottle);
+        if (index > -1) {
+            this.bottles.splice(index, 1);
+            this.bottleBar.setPercentage(this.bottles.length, 5);
+            console.log('Bottle deleted');
+        }
+    }
+
     checkThrowObjects() {
-        if(this.keyboard.D) {
+        if (this.keyboard.D) {
             let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
             this.throwableObjects.push(bottle);
         }
     }
 
     draw() {
+        // console.log('Münzleiste: ', this.bottleBar);
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.translate(this.camera_x, 0);
@@ -58,15 +129,19 @@ class World {
         this.addObjectsToMap(this.throwableObjects);
 
 
-        this.ctx.translate(-this.camera_x, 0); // status bar is not moving
+        this.ctx.translate(-this.camera_x, 0); // statusbar field
         this.addToMap(this.statusBar);
-        this.addToMap(this.coin);   
-        this.ctx.translate(this.camera_x, 0); // status bar is not moving
-
-
+        this.drawLifeBarText();
+        this.addToMap(this.coinBar);
+        this.drawCoinBarText();
+        this.addToMap(this.bottleBar);
+        this.drawBottleBarText();
+        this.ctx.translate(this.camera_x, 0); // statusbar field
 
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.coins);
+        this.addObjectsToMap(this.bottles);
 
         this.ctx.translate(-this.camera_x, 0);
 
@@ -80,6 +155,34 @@ class World {
         objects.forEach(object => {
             this.addToMap(object);
         });
+    }
+
+    drawLifeBarText() {
+        this.ctx.font = '12px Arial';
+        this.ctx.fillStyle = 'black';
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'top';
+        this.ctx.fillText(`${this.character.energy}`, 215, 50);
+    }
+
+    drawCoinBarText() {
+        if (this.coinBar && this.coinBar.totalCoins) {
+            this.ctx.font = '12px Arial';
+            this.ctx.fillStyle = 'black';
+            this.ctx.textAlign = 'left';
+            this.ctx.textBaseline = 'top';
+            this.ctx.fillText(`${this.coinBar.collectedCoins || 0} / ${this.coinBar.totalCoins}`, 215, 100);
+        }
+    }
+
+    drawBottleBarText() {
+        if (this.bottles && this.bottles.totalBottles) {
+            this.ctx.font = '12px Arial';
+            this.ctx.fillStyle = 'black';
+            this.ctx.textAlign = 'left';
+            this.ctx.textBaseline = 'top';
+            this.ctx.fillText(`${this.bottles.collectedBottles || 0} / ${this.bottles.totalBottles}`, 215, 150);
+        }
     }
 
     addToMap(mo) {
@@ -106,5 +209,5 @@ class World {
         mo.x = mo.x * -1;
     }
 
-    
+
 }
