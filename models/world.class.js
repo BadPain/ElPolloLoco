@@ -1,5 +1,4 @@
 class World {
-
     character = new Character();
     level = level1;
     canvas;
@@ -15,7 +14,8 @@ class World {
     collectedCoin = 0;
     totalCoins = 5;
     collectedBottles = 0;
-    totalBottles = 5;
+    totalBottles = 10;
+    playerInventory = [];
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -27,7 +27,7 @@ class World {
         this.addCoins();
         this.addBottles();
         this.coinBar.totalCoins = 5;
-        this.bottleBar.totalBottles = 5;
+        this.bottleBar.totalBottles = 10;
     }
 
     setWorld() {
@@ -41,6 +41,31 @@ class World {
             this.checkCollectCoins();
             this.checkCollectBottles();
         }, 200);
+    }
+
+    checkCollisions() {
+        this.level.enemies.forEach(enemy => {
+            if (this.character.isColliding(enemy)) {
+                this.character.hit();
+                this.statusBar.setPercentage(this.character.energy);
+            }
+        });
+    }
+
+    checkChickenCollisionsUp() {
+        this.level.enemies.forEach(enemy => {
+            if (this.character.isCollidingUp(enemy)) {
+                this.chickenDie();
+            }
+        });
+    }
+
+    chickenDie() {
+        this.level.enemies.forEach((enemy, index) => {
+            if (this.character.isCollidingUp(enemy)) {
+                this.level.enemies.splice(index, 1);
+            }
+        });
     }
 
     addCoins() {
@@ -65,14 +90,7 @@ class World {
         }
     }
 
-    checkCollisions() {
-        this.level.enemies.forEach(enemy => {
-            if (this.character.isColliding(enemy)) {
-                this.character.hit();
-                this.statusBar.setPercentage(this.character.energy);
-            }
-        });
-    }
+   
 
     checkCollectCoins() {
         this.coins.forEach((coin, index) => {
@@ -105,17 +123,22 @@ class World {
         let index = this.bottles.indexOf(bottle);
         if (index > -1) {
             this.bottles.splice(index, 1);
-            this.bottleBar.setPercentage(this.bottles.length, 5);
+            this.bottleBar.setPercentage(10 - this.bottles.length, 10);
+            this.playerInventory.push('bottle');
             console.log('Bottle deleted');
+            console.log(this.bottles.length);
+            console.log(this.playerInventory.length); 
         }
     }
 
     checkThrowObjects() {
-        if (this.keyboard.D) {
-            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
-            this.throwableObjects.push(bottle);
+        if (this.keyboard.D && this.playerInventory.length > 0) {
+          let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
+          this.throwableObjects.push(bottle);
+          this.playerInventory.pop();
+          console.log(this.playerInventory.length);
         }
-    }
+      }
 
     draw() {
         // console.log('Münzleiste: ', this.bottleBar);
@@ -162,7 +185,7 @@ class World {
         this.ctx.fillStyle = 'black';
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'top';
-        this.ctx.fillText(`${this.character.energy}`, 215, 50);
+        this.ctx.fillText(`${this.character.energy}`, 200, 50);
     }
 
     drawCoinBarText() {
@@ -171,17 +194,17 @@ class World {
             this.ctx.fillStyle = 'black';
             this.ctx.textAlign = 'left';
             this.ctx.textBaseline = 'top';
-            this.ctx.fillText(`${this.coinBar.collectedCoins || 0} / ${this.coinBar.totalCoins}`, 215, 100);
+            this.ctx.fillText(`${this.coinBar.collectedCoins || 0} / ${this.coinBar.totalCoins}`, 200, 100);
         }
     }
 
     drawBottleBarText() {
-        if (this.bottles && this.bottles.totalBottles) {
+        if (this.bottleBar && this.bottleBar.totalBottles) {
             this.ctx.font = '12px Arial';
             this.ctx.fillStyle = 'black';
             this.ctx.textAlign = 'left';
             this.ctx.textBaseline = 'top';
-            this.ctx.fillText(`${this.bottles.collectedBottles || 0} / ${this.bottles.totalBottles}`, 215, 150);
+            this.ctx.fillText(`${this.playerInventory.length} / ${this.bottleBar.totalBottles}`, 200, 150);
         }
     }
 
@@ -208,6 +231,5 @@ class World {
         this.ctx.restore();
         mo.x = mo.x * -1;
     }
-
 
 }

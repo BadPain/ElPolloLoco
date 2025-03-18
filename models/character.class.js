@@ -75,6 +75,9 @@ class Character extends MovableObject {
             if (this.world.keyboard.SPACE && !this.isAboveGround()) {
                 this.jump();
                 this.jumping_sound.play();
+            } else if(this.world.keyboard.SPACE && this.isJumping()) {
+                this.stopJump();
+                this.isJumping = false;
             }
             this.world.camera_x = -this.x + 100;
         }, 1000 / 60);
