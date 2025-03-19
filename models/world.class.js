@@ -26,6 +26,7 @@ class World {
         this.run();
         this.addCoins();
         this.addBottles();
+        this.addChickens();
         this.coinBar.totalCoins = 5;
         this.bottleBar.totalBottles = 10;
     }
@@ -40,21 +41,23 @@ class World {
             this.checkThrowObjects();
             this.checkCollectCoins();
             this.checkCollectBottles();
+            this.checkChickenCollisionsUp();
         }, 200);
     }
 
     checkCollisions() {
         this.level.enemies.forEach(enemy => {
             if (this.character.isColliding(enemy)) {
-                this.character.hit();
+                this.character.hit(enemy);
                 this.statusBar.setPercentage(this.character.energy);
             }
         });
     }
 
     checkChickenCollisionsUp() {
-        this.level.enemies.forEach(enemy => {
-            if (this.character.isCollidingUp(enemy)) {
+        this.level.enemies.forEach(chicken => {
+            if (this.character.isColliding(chicken) && this.character.y > chicken.y) {
+                this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
                 this.chickenDie();
             }
         });
@@ -62,7 +65,7 @@ class World {
 
     chickenDie() {
         this.level.enemies.forEach((enemy, index) => {
-            if (this.character.isCollidingUp(enemy)) {
+            if (this.character.isColliding(enemy)) {
                 this.level.enemies.splice(index, 1);
             }
         });
@@ -90,7 +93,14 @@ class World {
         }
     }
 
-   
+    addChickens() {
+        for (let i = 0; i < 10; i++) {
+            let x = -500 + Math.random() * 2500;
+            let chicken = new Chicken();
+            chicken.x = x;
+            this.level.enemies.push(chicken);
+        }
+    }
 
     checkCollectCoins() {
         this.coins.forEach((coin, index) => {
@@ -127,18 +137,18 @@ class World {
             this.playerInventory.push('bottle');
             console.log('Bottle deleted');
             console.log(this.bottles.length);
-            console.log(this.playerInventory.length); 
+            console.log(this.playerInventory.length);
         }
     }
 
     checkThrowObjects() {
         if (this.keyboard.D && this.playerInventory.length > 0) {
-          let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
-          this.throwableObjects.push(bottle);
-          this.playerInventory.pop();
-          console.log(this.playerInventory.length);
+            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
+            this.throwableObjects.push(bottle);
+            this.playerInventory.pop();
+            console.log(this.playerInventory.length);
         }
-      }
+    }
 
     draw() {
         // console.log('Münzleiste: ', this.bottleBar);
