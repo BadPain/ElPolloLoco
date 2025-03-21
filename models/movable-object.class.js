@@ -12,7 +12,18 @@ class MovableObject extends DrawableObject {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             }
+            console.log(this.speedY, 'Speed Y Apply Gravity');
+
+            if (this.isOnGround()) {
+                this.speedY = 0;
+            }
         }, 1000 / 25);
+    }
+
+    isFallingDown() {
+        console.log(this.speedY, "Speed Y");
+        return this.y < 220 && this.speedY < 0;
+        // return this.speedY > 0;
     }
 
     isAboveGround() {
@@ -85,11 +96,12 @@ class MovableObject extends DrawableObject {
         right: 0
     };
 
-    playAnimation(images) {
+    playAnimation(images, speed) {
         let i = this.currentImage % images.length;
         let path = images[i];
         this.img = this.imageCache[path];
         this.currentImage++;
+        this.animationSpeed = 1;
     }
 
     moveRight() {
@@ -103,6 +115,9 @@ class MovableObject extends DrawableObject {
     jump() {
         this.speedY = 20;
     }
+
+
+
 }
 
 

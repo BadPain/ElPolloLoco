@@ -3,6 +3,7 @@ class Character extends MovableObject {
     speed = 10;
     width = 90;
     height = 150;
+    speedY = 0;
 
     IMAGES_WALKING = [
         'img/main/2_character_pepe/2_walk/W-21.png',
@@ -54,17 +55,32 @@ class Character extends MovableObject {
         'img/main/2_character_pepe/1_idle/idle/I-10.png'
     ]
 
+    IMAGES_LONGIDLE = [
+        'img/main/2_character_pepe/1_idle/long_idle/I-11.png',
+        'img/main/2_character_pepe/1_idle/long_idle/I-12.png',
+        'img/main/2_character_pepe/1_idle/long_idle/I-13.png',
+        'img/main/2_character_pepe/1_idle/long_idle/I-14.png',
+        'img/main/2_character_pepe/1_idle/long_idle/I-15.png',
+        'img/main/2_character_pepe/1_idle/long_idle/I-16.png',
+        'img/main/2_character_pepe/1_idle/long_idle/I-17.png',
+        'img/main/2_character_pepe/1_idle/long_idle/I-18.png',
+        'img/main/2_character_pepe/1_idle/long_idle/I-19.png',
+        'img/main/2_character_pepe/1_idle/long_idle/I-20.png'
+    ]
+
     world;
     walking_sound = new Audio('audio/walk_new3.mp3');
-    jumping_sound = new Audio('audio/Jipii.mp3');
+    jumping_sound = new Audio('audio/jipii3.mp3');
 
 
     offset = {
-        top: 120,
-        bottom: 30,
-        left: 40,
-        right: 30
+        top: 60,
+        bottom: 0,
+        left: 20,
+        right: 20
     }
+
+    
 
 
     constructor() {
@@ -74,6 +90,7 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_IDLE);
+        this.loadImages(this.IMAGES_LONGIDLE);
         this.applyGravity();
         this.walking_sound.volume = 0.3;
         this.jumping_sound.volume = 0.1;
@@ -95,23 +112,37 @@ class Character extends MovableObject {
             }
             if (this.world.keyboard.SPACE && !this.isAboveGround()) {
                 this.jump();
+                console.log(this.speedY, "Speed Y, Jump Taste");
+                console.log(this);
+                
+                
                 // this.jumping_sound.play();
             }
             this.world.camera_x = -this.x + 100;
         }, 1000 / 60);
 
+        let idleTime = 0;
         setInterval(() => {
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
+                idleTime = 0;
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
+                idleTime = 0;
+            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                this.playAnimation(this.IMAGES_WALKING);
+                idleTime = 0;
             } else if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
-            } else if (this.isOnGround()){
-                this.playAnimation(this.IMAGES_IDLE);
-            } else {
-                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                    this.playAnimation(this.IMAGES_WALKING);
+                console.log(this.speedY, "Speed Y, Jump Taste");
+                console.log(this);
+                idleTime = 0;
+            } else if (this.isOnGround()) {
+                idleTime += 100;
+                if (idleTime >= 10000) {
+                    this.playAnimation(this.IMAGES_LONGIDLE, 10);
+                } else {
+                    this.playAnimation(this.IMAGES_IDLE);
                 }
             }
         }, 100);

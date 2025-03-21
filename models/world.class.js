@@ -42,13 +42,13 @@ class World {
             this.checkCollectCoins();
             this.checkCollectBottles();
             this.checkChickenCollisionsUp();
-        }, 200);
+        }, 10);
     }
 
     checkCollisions() {
-        this.level.enemies.forEach(enemy => {
-            if (this.character.isColliding(enemy)) {
-                this.character.hit(enemy);
+        this.level.enemies.forEach(chicken => {
+            if (this.character.isColliding(chicken) && this.character.isAboveGround()) {
+                this.character.hit(chicken);
                 this.statusBar.setPercentage(this.character.energy);
             }
         });
@@ -56,9 +56,18 @@ class World {
 
     checkChickenCollisionsUp() {
         this.level.enemies.forEach(chicken => {
-            if (this.character.isColliding(chicken) && this.character.y > chicken.y) {
-                this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
-                this.chickenDie();
+            // console.log(chicken.y);
+            // console.log(this.character.y);
+
+            // console.log(this.character.y, "Character Y", chicken.y, "Chicken Y");
+            // console.log(this.character.isColliding(chicken));
+
+            if (this.character.isColliding(chicken)) {
+                if (this.character.isAboveGround()) {
+                    // console.log(this.character.y, "Character Y", chicken.y, "Chicken Y");
+                    this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
+                    // this.chickenDie();
+                }
             }
         });
     }
@@ -224,6 +233,7 @@ class World {
         }
         mo.draw(this.ctx);
         mo.drawFrame(this.ctx);
+        mo.drawFrameOffset(this.ctx)
 
         if (mo.otherDirection) {
             this.flipImageBack(mo);
