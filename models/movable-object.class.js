@@ -12,7 +12,7 @@ class MovableObject extends DrawableObject {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             }
-            console.log(this.speedY, 'Speed Y Apply Gravity');
+            // console.log(this.speedY, 'Speed Y Apply Gravity');
 
             if (this.isOnGround()) {
                 this.speedY = 0;
@@ -21,7 +21,9 @@ class MovableObject extends DrawableObject {
     }
 
     isFallingDown() {
-        console.log(this.speedY, "Speed Y");
+        // console.log( isFallingDown(), "Falling Down");
+        
+        // console.log(this.speedY, "Speed Y");
         return this.y < 220 && this.speedY < 0;
         // return this.speedY > 0;
     }
@@ -113,6 +115,7 @@ class MovableObject extends DrawableObject {
     }
 
     jump() {
+        this.currentImage = 0;
         this.speedY = 20;
     }
 

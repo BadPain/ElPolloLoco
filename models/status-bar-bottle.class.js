@@ -28,7 +28,7 @@ class BottleBar extends DrawableObject {
         this.totalBottles = totalBottles;
         this.percentage = (this.collectedBottles / this.totalBottles) * 100;
         let path = this.IMAGES[this.bottleBar()];
-        console.log(path);
+        // console.log(path);
         this.img = this.imageCache[path];
     }
 

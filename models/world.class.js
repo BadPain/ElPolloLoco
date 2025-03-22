@@ -42,12 +42,13 @@ class World {
             this.checkCollectCoins();
             this.checkCollectBottles();
             this.checkChickenCollisionsUp();
+            this.checkBottleCollisions();
         }, 10);
     }
 
     checkCollisions() {
         this.level.enemies.forEach(chicken => {
-            if (this.character.isColliding(chicken) && this.character.isAboveGround()) {
+            if (this.character.isColliding(chicken) && this.character.isAboveGround() && this.character.isFallingDown()) {
                 this.character.hit(chicken);
                 this.statusBar.setPercentage(this.character.energy);
             }
@@ -56,18 +57,23 @@ class World {
 
     checkChickenCollisionsUp() {
         this.level.enemies.forEach(chicken => {
-            // console.log(chicken.y);
-            // console.log(this.character.y);
-
-            // console.log(this.character.y, "Character Y", chicken.y, "Chicken Y");
-            // console.log(this.character.isColliding(chicken));
-
             if (this.character.isColliding(chicken)) {
-                if (this.character.isAboveGround()) {
-                    // console.log(this.character.y, "Character Y", chicken.y, "Chicken Y");
+                if (this.character.isAboveGround() && this.character.speedY < 0) {
                     this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
-                    // this.chickenDie();
                 }
+            }
+        });
+    }
+
+    checkBottleCollisions() {
+        this.level.enemies.forEach(chicken => {
+            // console.log(this.isThrown === true && this.chicken.isColliding(chicken));
+            console.log(this.level.enemies.isColliding(this.bottles));
+            
+            
+            if (this.isThrown === true && this.level.enemies.isColliding(this.bottles)) {
+                this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
+                // console.log(this.isThrown === true && this.chicken.isColliding(chicken));
             }
         });
     }
@@ -108,6 +114,8 @@ class World {
             let chicken = new Chicken();
             chicken.x = x;
             this.level.enemies.push(chicken);
+            // console.log('Chicken produziert :*');
+            
         }
     }
 
@@ -115,7 +123,7 @@ class World {
         this.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
                 this.collectCoin(coin);
-                console.log('Coin collected');
+                // console.log('Coin collected');
             }
         });
     }
@@ -124,7 +132,7 @@ class World {
         this.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle)) {
                 this.collectBottle(bottle);
-                console.log('Bottle collected');
+                // console.log('Bottle collected');
             }
         });
     }
@@ -134,7 +142,7 @@ class World {
         if (index > -1) {
             this.coins.splice(index, 1);
             this.coinBar.setPercentage(5 - this.coins.length, 5);
-            console.log('Coin deleted');
+            // console.log('Coin deleted');
         }
     }
 
@@ -144,18 +152,20 @@ class World {
             this.bottles.splice(index, 1);
             this.bottleBar.setPercentage(10 - this.bottles.length, 10);
             this.playerInventory.push('bottle');
-            console.log('Bottle deleted');
-            console.log(this.bottles.length);
-            console.log(this.playerInventory.length);
+            // console.log('Bottle deleted');
+            // console.log(this.bottles.length);
+            // console.log(this.playerInventory.length);
         }
     }
 
     checkThrowObjects() {
-        if (this.keyboard.D && this.playerInventory.length > 0) {
+        if (this.keyboard.D && this.playerInventory.length > 0 && this.throwableObjects.length < 1) {
             let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
             this.throwableObjects.push(bottle);
+            
             this.playerInventory.pop();
-            console.log(this.playerInventory.length);
+            
+            
         }
     }
 
