@@ -5,7 +5,13 @@ class MovableObject extends DrawableObject {
     acceleration = 1;
     energy = 100;
     lastHit = 0;
-
+    offset = {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
+    };
+    
     applyGravity() {
         setInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
@@ -91,12 +97,7 @@ class MovableObject extends DrawableObject {
             this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }
 
-    offset = {
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0
-    };
+    
 
     playAnimation(images, speed) {
         let i = this.currentImage % images.length;

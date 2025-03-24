@@ -13,6 +13,8 @@ body {
     background-image: url('/img/desert.jpg');
     background-size: cover;
     background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
 }
 
 .container {
@@ -20,7 +22,7 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding-top: 50px;
+    padding-bottom: 350px;
     margin: auto;
 }
 
@@ -29,15 +31,131 @@ body {
     letter-spacing: 5px;
     font-size: 60px;
     color: rgb(0, 0, 0);
+    cursor: default;
+}
+
+#startScreen {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.startImage {
+    position: absolute;
+    width: 720px;
+    height: 480px;
+}
+
+#startButton {
+    position: absolute;
+    top: 25px;
+    right: 50px;
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#controlsButton {
+    position: absolute;
+    top: 25px;
+    left: 50px;
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+#start-button:hover {
+    background-color: #3e8e41;
 }
 
 canvas {
-    display: block;
+    display: none;
     background-color: black;
 }
 
-.controls {
-    display:none;
+#controls {
+    display: none;
+}
+
+.panelMain {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#muteMusicButton {
+    background-image: url('img/laut.png');
+    background-size: cover;
+    background-color: transparent;
+    width: 25px; 
+    height: 25px;
+    border: none;
+    cursor: pointer;
+}
+
+#fullscreen {
+    background-image: url('img/vollbild.png');
+    background-size: cover;
+    background-color: transparent;
+    width: 25px; 
+    height: 25px;
+    border: none;
+    cursor: pointer;
+}
+
+.panel {
+    display: none;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    cursor: default;
+}
+
+.footer button {
+    margin-left: 130px;
+}
+
+#closeControls {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.footerInfo {
+    font-size: 35px;
+    letter-spacing: 2px;
+}
+
+.poweredBy {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    font-size: 15px;
+    gap: 20px;
+}
+
+.footer img {
+    width: 15px;
+    height: 15px;
 }
 
 @media only screen and (max-width: 720px) {
@@ -50,16 +168,20 @@ canvas {
     body {
         margin: 0;
     }
+
     canvas {
         height: 100vh;
         margin: 0;
     }
+
     .title {
         display: none;
     }
+
     .container {
         padding-top: 0;
     }
+
     .controls {
         display: block;
         position: fixed;

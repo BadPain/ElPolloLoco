@@ -26,27 +26,35 @@
     <script src="models/throwable-object.class.js"></script>
     <script src="models/endboss.class.js"></script>
     <script src="levels/level1.js"></script>
-    <script src="js/game.js"></script>
+    <script src="js/game.js" defer></script>
 
 
     <title>El pollo loco</title>
 </head>
 
 
-<body onload="init()">
-    <div class="container">
+<body>
+    <div id="container" class="container">
 
         <h1 class="title">El pollo loco</h1>
-
+        <div id="startScreen">
+            <img class="startImage" src="img/main/9_intro_outro_screens/start/startscreen_1.png" alt="">
+            <button id="startButton" onclick="toStartAGame()">START</button>
+            <button id="controlsButton" onclick="viewControls()">CONTROLS</button>
+        </div>
+        <div class="panelMain" id="panelMain">
+            <button id="muteMusicButton" onclick="toggleMusic()"></button>
+            <button id="fullscreen" onclick="fullscreen()"></button>
+        </div>
         <canvas id="canvas" width="720" height="480">
+            
         </canvas>
-        <div class="controls">
+        <div id="controls">
             <div id="hud">
-                <div class="panelMain">
-                    <button id="muteMusicButton" onclick="toggleMusic()">Mute</button>
-                    <button id="playGame" onclick="playGame()">Play</button>
-                    <button id="buttonView" onclick="toggleView()">View</button>
-                </div>
+                <!-- <div class="panelMain" id="panelMain">
+                    <button id="muteMusicButton" onclick="toggleMusic()"></button>
+                    <button id="fullscreen" onclick="fullscreen()"></button>
+                </div> -->
                 <div class="panel">
                     <div id="panel-wrapper">
                         <button id="btnLeft" onclick="moveLeft()">&lt;</button>
@@ -56,6 +64,19 @@
                         <button id="btnJump" onclick="jump()">&uarr;</button>
                         <button id="btnThrow" onclick="throwObject()">&dagger;</button>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="footerInfo">
+                <button id="closeControls" onclick="closeControls()">CLOSE CONTROLS</button>
+                <p>Pfeiltasten: Bewegen den Charakter</p>
+                <p>Leertaste: Springen</p>
+                <p>Taste D: Flasche werfen</p>
+                <div class="poweredBy">
+                    <img src="img/icons/favicon.png" alt="">
+                    <p>powered by Florian and <a href="https://www.flaticon.com/de/kostenlose-icons/volumen"
+                            title="volumen Icons">Flaticon</a></p>
                 </div>
             </div>
 

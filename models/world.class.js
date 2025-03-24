@@ -17,6 +17,7 @@ class World {
     totalBottles = 10;
     playerInventory = [];
 
+
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -43,7 +44,14 @@ class World {
             this.checkCollectBottles();
             this.checkChickenCollisionsUp();
             this.checkBottleCollisions();
+            // this.mainConsoleLog();
+            this.removeNotCollisionBottle();
         }, 10);
+    }
+
+    mainConsoleLog() {
+        console.log(this.throwableObjects.length);
+        // console.log(world.throwableObjects[0].y);
     }
 
     checkCollisions() {
@@ -67,14 +75,30 @@ class World {
 
     checkBottleCollisions() {
         this.level.enemies.forEach(chicken => {
-            // console.log(this.isThrown === true && this.chicken.isColliding(chicken));
-            console.log(this.level.enemies.isColliding(this.bottles));
-            
-            
-            if (this.isThrown === true && this.level.enemies.isColliding(this.bottles)) {
-                this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
-                // console.log(this.isThrown === true && this.chicken.isColliding(chicken));
+            if (this.throwableObjects.length > 0) {
+                if (this.throwableObjects[0].isColliding(chicken)) {
+                    let isThrow = true;
+                    this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
+                    this.throwableObjects[0].bottleSplash(isThrow);
+                    this.isThrow = false;
+                }
             }
+        });
+    }
+
+    removeNotCollisionBottle() {
+        if (this.throwableObjects.length > 0) {
+            if (this.throwableObjects[0].y > 400 && !this.isCollidingWithChicken) {
+                this.removeObjectFromGame();
+            } else {
+                return;
+            }
+        }
+    }
+
+    removeObjectFromGame() {
+        this.throwableObjects.forEach(bottleRemove => {
+            this.throwableObjects.splice(this.throwableObjects.indexOf(bottleRemove), 1);
         });
     }
 
@@ -115,7 +139,7 @@ class World {
             chicken.x = x;
             this.level.enemies.push(chicken);
             // console.log('Chicken produziert :*');
-            
+
         }
     }
 
@@ -162,10 +186,8 @@ class World {
         if (this.keyboard.D && this.playerInventory.length > 0 && this.throwableObjects.length < 1) {
             let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
             this.throwableObjects.push(bottle);
-            
+
             this.playerInventory.pop();
-            
-            
         }
     }
 
@@ -261,5 +283,4 @@ class World {
         this.ctx.restore();
         mo.x = mo.x * -1;
     }
-
 }
