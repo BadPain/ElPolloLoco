@@ -3,6 +3,11 @@
     src: url(fonts/ZABARS/Zabars.ttf);
 }
 
+:not(:root):fullscreen::backdrop {
+    background-image: url('/img/desert.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
 
 body {
     font-family: Zabars, sans-serif;

@@ -22,9 +22,16 @@ function closeControls() {
 }
 
 function fullscreen() {
-    let fullscreen = document.getElementById('container');
-    enterFullscreen(fullscreen);
-}
+    if (document.fullscreenElement) {
+      // Wenn der Benutzer bereits im Fullscreen-Modus ist, schließe ihn
+      document.exitFullscreen();
+      document.getElementById("fullscreen").style.backgroundImage = "url('img/vollbild.png')";
+    } else {
+      // Wenn der Benutzer nicht im Fullscreen-Modus ist, öffne ihn
+      document.getElementById("container").requestFullscreen();
+      document.getElementById("fullscreen").style.backgroundImage = "url('img/minimieren.png')";
+    }
+  }
 
 function enterFullscreen(element) {
     if (element.requestFullscreen) {
@@ -44,12 +51,20 @@ function exitFullscreen() {
     }
 }
 
+// function checkESC() {
+//     if (this.keyboard.ESCAPE) {
+//         fullscreen();
+//     }
+// }
+
 function toggleMusic() {
     let music = document.getElementById('music');
     if (music.playing) {
         music.pause();
+        document.getElementsById("muteMusicButton").style.backgroundImage = "url('img/laut.png')";
     } else {
         music.play();
+        document.getElementsById("muteMusicButton").style.backgroundImage = "url('img/stumm.png')";
     }
 }
 
@@ -89,6 +104,9 @@ window.addEventListener("keydown", (e) => {
     if (e.keyCode == 68) {
         keyboard.D = true;
     }
+    if (e.keyCode == 27) {
+        keyboard.ESCAPE = true;
+    }
 })
 
 window.addEventListener("keyup", (e) => {
@@ -109,6 +127,9 @@ window.addEventListener("keyup", (e) => {
     }
     if (e.keyCode == 68) {
         keyboard.D = false;
+    }
+    if (e.keyCode == 27) {
+        keyboard.ESCAPE = false;
     }
 })
 

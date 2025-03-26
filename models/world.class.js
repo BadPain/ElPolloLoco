@@ -25,6 +25,7 @@ class World {
         this.draw();
         this.setWorld();
         this.run();
+        this.checkESC();
         this.addCoins();
         this.addBottles();
         this.addChickens();
@@ -53,6 +54,17 @@ class World {
         console.log(this.throwableObjects.length);
         // console.log(world.throwableObjects[0].y);
     }
+
+    // checkESC() {
+    //     if (this.keyboard.ESCAPE) {
+    //         console.log('ESC');
+    //         if (document.fullscreenElement) {
+    //             document.exitFullscreen();
+    //         } else {
+    //             fullscreen();
+    //         }
+    //     }
+    // }
 
     checkCollisions() {
         this.level.enemies.forEach(chicken => {
