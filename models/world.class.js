@@ -9,6 +9,7 @@ class World {
     throwableObjects = [];
     coinBar = new CoinBar();
     bottleBar = new BottleBar();
+    bossBar = new BossBar();
     coins = [];
     bottles = [];
     collectedCoin = 0;
@@ -16,6 +17,7 @@ class World {
     collectedBottles = 0;
     totalBottles = 10;
     playerInventory = [];
+    showBossBar = false;
 
 
     constructor(canvas, keyboard) {
@@ -45,31 +47,41 @@ class World {
             this.checkCollectBottles();
             this.checkChickenCollisionsUp();
             this.checkBottleCollisions();
-            // this.mainConsoleLog();
             this.removeNotCollisionBottle();
+            this.toggleBoss();
         }, 10);
+        setInterval(() => {
+            this.mainConsoleLog();
+        }, 500);
     }
+
+
 
     mainConsoleLog() {
-        console.log(this.throwableObjects.length);
+        // console.log(this.throwableObjects.length);
         // console.log(world.throwableObjects[0].y);
+        // console.log(this.keyboard.ESCAPE, 'ESC');
+        // console.log(this.checkCollisions(), 'Collisions');
+        // console.log(this.character.isColliding(chicken), 'isColliding with chicken');
+        // console.log(this.character.isAboveGround(), 'isAboveGround');
+        // console.log(this.character.isFallingDown(), 'isFallingDown');
     }
 
-    // checkESC() {
-    //     if (this.keyboard.ESCAPE) {
-    //         console.log('ESC');
-    //         if (document.fullscreenElement) {
-    //             document.exitFullscreen();
-    //         } else {
-    //             fullscreen();
-    //         }
-    //     }
-    // }
+    checkESC() {
+        if (this.keyboard.ESCAPE) {
+            console.log('ESC');
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                fullscreen();
+            }
+        }
+    }
 
     checkCollisions() {
-        this.level.enemies.forEach(chicken => {
-            if (this.character.isColliding(chicken) && this.character.isAboveGround() && this.character.isFallingDown()) {
-                this.character.hit(chicken);
+        this.level.enemies.forEach(enemies => {
+            if (this.character.isColliding(enemies) && this.character.isOnGround() && !this.character.isFallingDown()) {
+                this.character.hit(enemies);
                 this.statusBar.setPercentage(this.character.energy);
             }
         });
@@ -79,11 +91,36 @@ class World {
         this.level.enemies.forEach(chicken => {
             if (this.character.isColliding(chicken)) {
                 if (this.character.isAboveGround() && this.character.speedY < 0) {
-                    this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
+                    this.chicken = chicken;
+                    this.dieAnimation(this.chicken);
+                    // this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
                 }
             }
         });
     }
+
+    dieAnimation(chicken) {
+        let IMAGES_DEAD = [
+            'img/main/3_enemies_chicken/chicken_normal/2_dead/dead.png'
+        ];
+        let deadImage = new Image();
+        deadImage.src = IMAGES_DEAD[0];
+    
+        deadImage.onload = () => {
+            chicken.image = deadImage;
+            console.log("Chicken wurde auf tot gesetzt:", chicken);
+    
+            setTimeout(() => {
+                let index = this.level.enemies.indexOf(chicken);
+                console.log("Index im Array:", index, "Gesamtes Array:", this.level.enemies);
+                if (index !== -1) {
+                    this.level.enemies.splice(index, 1);
+                    console.log("Chicken wurde entfernt.");
+                }
+            }, 10000);
+        };
+    }
+    
 
     checkBottleCollisions() {
         this.level.enemies.forEach(chicken => {
@@ -114,13 +151,15 @@ class World {
         });
     }
 
-    chickenDie() {
-        this.level.enemies.forEach((enemy, index) => {
-            if (this.character.isColliding(enemy)) {
-                this.level.enemies.splice(index, 1);
-            }
-        });
-    }
+    // chickenDie() {
+    //     this.level.enemies.forEach((enemy, index) => {
+    //         if (this.character.isColliding(enemy)) {
+    //             this.level.enemies.splice(index, 1);
+    //         }
+    //     });
+    // }
+
+
 
     addCoins() {
         for (let i = 0; i < 5; i++) {
@@ -205,6 +244,7 @@ class World {
 
     draw() {
         // console.log('Münzleiste: ', this.bottleBar);
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.translate(this.camera_x, 0);
@@ -222,7 +262,10 @@ class World {
         this.drawCoinBarText();
         this.addToMap(this.bottleBar);
         this.drawBottleBarText();
+        this.toggleBoss();
         this.ctx.translate(this.camera_x, 0); // statusbar field
+
+
 
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
@@ -231,11 +274,15 @@ class World {
 
         this.ctx.translate(-this.camera_x, 0);
 
+
+
         let self = this;
         requestAnimationFrame(function () {
             self.draw();
         });
     }
+
+
 
     addObjectsToMap(objects) {
         objects.forEach(object => {
@@ -268,6 +315,26 @@ class World {
             this.ctx.textAlign = 'left';
             this.ctx.textBaseline = 'top';
             this.ctx.fillText(`${this.playerInventory.length} / ${this.bottleBar.totalBottles}`, 200, 150);
+        }
+    }
+
+    drawBossBarText() {
+        if (this.character.x > 1500) {
+            this.ctx.font = '12px Arial';
+            this.ctx.fillStyle = 'black';
+            this.ctx.textAlign = 'left';
+            this.ctx.textBaseline = 'top';
+            let textWidth = this.ctx.measureText('nomnom').width;
+            let x = 720 - textWidth - 10;
+            this.ctx.fillText('nomnom', x, 50);
+        }
+    }
+
+    toggleBoss() {
+        if (this.character.x > 1500 && !this.showBossBar) {
+            this.addToMap(this.bossBar);
+            this.drawBossBarText();
+            this.showBossBar = true;
         }
     }
 
