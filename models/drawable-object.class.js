@@ -16,8 +16,7 @@ class DrawableObject {
         try {
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
         } catch (e) {
-            // console.warn('Bild konnte nicht gezeichnet werden', e);
-            // console.log(this.img.src);
+            console.warn('Bild konnte nicht gezeichnet werden', e);
         }
     }
 
@@ -38,6 +37,7 @@ class DrawableObject {
             ctx.stroke();
         }
     }
+    
     drawFrameOffset(ctx) {
         if (this instanceof Character || this instanceof Chicken || this instanceof Coin || this instanceof Bottles) {
             ctx.beginPath();

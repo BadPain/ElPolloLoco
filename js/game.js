@@ -1,6 +1,11 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+window.backgroundMusic = new Audio('audio/backgroundmusic.mp3');
+window.backgroundMusic.volume = 0.1;
+window.backgroundMusic.loop = true;
+
+
 
 function toStartAGame() {
     console.log(document.getElementById("panelMain"));
@@ -10,7 +15,12 @@ function toStartAGame() {
     document.getElementById("closeControls").style.display = "none";
     document.getElementById("controls").style.display = "block"
     document.getElementById("panelMain").style.display = "flex";
+    playBackgroundMusic();
     init();
+}
+
+function playBackgroundMusic() {
+    window.backgroundMusic.play();
 }
 
 function viewControls() {
@@ -23,11 +33,9 @@ function closeControls() {
 
 function fullscreen() {
     if (document.fullscreenElement) {
-      // Wenn der Benutzer bereits im Fullscreen-Modus ist, schließe ihn
       document.exitFullscreen();
       document.getElementById("fullscreen").style.backgroundImage = "url('img/vollbild.png')";
     } else {
-      // Wenn der Benutzer nicht im Fullscreen-Modus ist, öffne ihn
       document.getElementById("container").requestFullscreen();
       document.getElementById("fullscreen").style.backgroundImage = "url('img/minimieren.png')";
     }
@@ -36,9 +44,9 @@ function fullscreen() {
 function enterFullscreen(element) {
     if (element.requestFullscreen) {
         element.requestFullscreen();
-    } else if (element.msRequestFullscreen) {      // for IE11 (remove June 15, 2022)
+    } else if (element.msRequestFullscreen) {
         element.msRequestFullscreen();
-    } else if (element.webkitRequestFullscreen) {  // iOS Safari
+    } else if (element.webkitRequestFullscreen) {
         element.webkitRequestFullscreen();
     }
 }
@@ -51,33 +59,44 @@ function exitFullscreen() {
     }
 }
 
-// function checkESC() {
-//     if (this.keyboard.ESCAPE) {
-//         fullscreen();
-//     }
-// }
+let soundMuted = false;
 
 function toggleMusic() {
-    let music = document.getElementById('music');
-    if (music.playing) {
-        music.pause();
-        document.getElementsById("muteMusicButton").style.backgroundImage = "url('img/laut.png')";
+    if (soundMuted) {
+        play();
+        document.getElementById("muteMusicButton").style.backgroundImage = "url('img/laut.png')";
     } else {
-        music.play();
-        document.getElementsById("muteMusicButton").style.backgroundImage = "url('img/stumm.png')";
+        mute();
+        document.getElementById("muteMusicButton").style.backgroundImage = "url('img/stumm.png')";
     }
+    soundMuted = !soundMuted;
 }
 
 function mute() {
-    world.character.walking_sound.volume = 0.0;
-    world.character.jumping_sound.volume = 0.0;
+    if (!world.character) return;
+    let sounds = [
+        world.character.walking_sound,
+        world.character.jumping_sound,
+        window.backgroundMusic,
+        document.getElementById("music")
+    ];
+    sounds.forEach(sound => {
+        if (sound) sound.muted = true;
+    });
 }
 
 function play() {
-    world.character.walking_sound.volume = 0.3;
-    world.character.jumping_sound.volume = 0.1;
+    if (!world.character) return;
+    let sounds = [
+        world.character.walking_sound,
+        world.character.jumping_sound,
+        window.backgroundMusic,
+        document.getElementById("music")
+    ];
+    sounds.forEach(sound => {
+        if (sound) sound.muted = false;
+    });
 }
-
 
 function init() {
     canvas = document.getElementById("canvas");
@@ -132,21 +151,3 @@ window.addEventListener("keyup", (e) => {
         keyboard.ESCAPE = false;
     }
 })
-
-// window.addEventListener('keydown', function (event) {
-//     if (event.key == 37) keyboard.LEFT = true;
-//     if (event.key == 39) keyboard.RIGHT = true;
-//     if (event.key == 38) keyboard.UP = true;
-//     if (event.key == 40) keyboard.DOWN = true;
-//     if (event.key == 32) keyboard.SPACE = true;
-//     console.log(event);
-// });
-
-// window.addEventListener('keyup', function (event) {
-//     if (event.key == 37) keyboard.LEFT = false;
-//     if (event.key == 39) keyboard.RIGHT = false;
-//     if (event.key == 38) keyboard.UP = false;
-//     if (event.key == 40) keyboard.DOWN = false;
-//     if (event.key == 32) keyboard.SPACE = false;
-// });
-

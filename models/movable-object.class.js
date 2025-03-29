@@ -18,8 +18,6 @@ class MovableObject extends DrawableObject {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             }
-            // console.log(this.speedY, 'Speed Y Apply Gravity');
-
             if (this.isOnGround()) {
                 this.speedY = 0;
             }
@@ -27,11 +25,7 @@ class MovableObject extends DrawableObject {
     }
 
     isFallingDown() {
-        // console.log( isFallingDown(), "Falling Down");
-        
-        // console.log(this.speedY, "Speed Y");
         return this.y < 220 && this.speedY < 0;
-        // return this.speedY > 0;
     }
 
     isAboveGround() {
@@ -49,20 +43,6 @@ class MovableObject extends DrawableObject {
             return this.y >= 278;
         }
     }
-
-    // isCollidingLeftRight(mo) {
-    //     return this.x < mo.x + mo.width &&
-    //         this.x + this.width > mo.x &&
-    //         this.y > mo.y - this.height &&
-    //         this.y < mo.y + this.height;
-    // }
-
-    // isCollidingUp(mo) {
-    //     return this.x + this.width > mo.x &&
-    //         this.y < mo.y + mo.height &&
-    //         this.x < mo.x + mo.width &&
-    //         this.y + this.height > mo.y;
-    // }
 
     hit() {
         this.energy -= 1;
@@ -83,21 +63,12 @@ class MovableObject extends DrawableObject {
         return timepassed < 1;
     }
 
-    // isColliding(mo) {
-    //     return (this.x + this.width) >= mo.x && this.x <= (mo.x + mo.width) &&
-    //         (this.y + this.offsetY + this.height) >= mo.y &&
-    //         (this.y + this.offsetY) <= (mo.y + mo.height);
-    // }
-
-
     isColliding(mo) {
         return this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
             this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
             this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
             this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }
-
-    
 
     playAnimation(images, speed) {
         let i = this.currentImage % images.length;

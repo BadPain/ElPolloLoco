@@ -24,6 +24,7 @@ class World {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.initFullscreenListener();
         this.draw();
         this.setWorld();
         this.run();
@@ -31,6 +32,7 @@ class World {
         this.addCoins();
         this.addBottles();
         this.addChickens();
+        this.addSmallChickens();
         this.coinBar.totalCoins = 5;
         this.bottleBar.totalBottles = 10;
     }
@@ -49,13 +51,12 @@ class World {
             this.checkBottleCollisions();
             this.removeNotCollisionBottle();
             this.toggleBoss();
+            this.checkESC();
         }, 10);
         setInterval(() => {
             this.mainConsoleLog();
         }, 500);
     }
-
-
 
     mainConsoleLog() {
         // console.log(this.throwableObjects.length);
@@ -67,16 +68,24 @@ class World {
         // console.log(this.character.isFallingDown(), 'isFallingDown');
     }
 
-    checkESC() {
-        if (this.keyboard.ESCAPE) {
-            console.log('ESC');
+    initFullscreenListener() {
+        document.addEventListener("fullscreenchange", () => {
+            const fullscreenIcon = document.getElementById("fullscreen");
             if (document.fullscreenElement) {
-                document.exitFullscreen();
+                fullscreenIcon.style.backgroundImage = "url('img/minimieren.png')";
             } else {
-                fullscreen();
+                fullscreenIcon.style.backgroundImage = "url('img/vollbild.png')";
             }
+        });
+    }
+
+    checkESC() {
+        if (this.keyboard.ESCAPE && document.fullscreenElement) {
+            console.log('ESC');
+            document.exitFullscreen();
         }
     }
+
 
     checkCollisions() {
         this.level.enemies.forEach(enemies => {
@@ -93,41 +102,39 @@ class World {
                 if (this.character.isAboveGround() && this.character.speedY < 0) {
                     this.chicken = chicken;
                     this.dieAnimation(this.chicken);
-                    // this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
                 }
             }
         });
     }
 
     dieAnimation(chicken) {
-        let IMAGES_DEAD = [
-            'img/main/3_enemies_chicken/chicken_normal/2_dead/dead.png'
-        ];
-        let deadImage = new Image();
-        deadImage.src = IMAGES_DEAD[0];
-    
-        deadImage.onload = () => {
-            chicken.image = deadImage;
-            console.log("Chicken wurde auf tot gesetzt:", chicken);
-    
-            setTimeout(() => {
-                let index = this.level.enemies.indexOf(chicken);
-                console.log("Index im Array:", index, "Gesamtes Array:", this.level.enemies);
-                if (index !== -1) {
-                    this.level.enemies.splice(index, 1);
-                    console.log("Chicken wurde entfernt.");
-                }
-            }, 10000);
+        let IMAGES_DEAD = {
+            normal: 'img/main/3_enemies_chicken/chicken_normal/2_dead/dead.png',
+            small: 'img/main/3_enemies_chicken/chicken_small/2_dead/dead.png'
         };
+        chicken.isDead = true;
+        clearInterval(chicken.moveInterval);
+        clearInterval(chicken.walkInterval);
+        if (chicken instanceof SmallChicken) {
+            chicken.loadImage(IMAGES_DEAD.small);
+        } else {
+            chicken.loadImage(IMAGES_DEAD.normal);
+        }
+        setTimeout(() => {
+            let index = this.level.enemies.indexOf(chicken);
+            if (index !== -1) {
+                this.level.enemies.splice(index, 1);
+            }
+        }, 10000);
     }
-    
 
     checkBottleCollisions() {
         this.level.enemies.forEach(chicken => {
             if (this.throwableObjects.length > 0) {
                 if (this.throwableObjects[0].isColliding(chicken)) {
                     let isThrow = true;
-                    this.level.enemies.splice(this.level.enemies.indexOf(chicken), 1);
+                    this.chicken = chicken;
+                    this.dieAnimation(this.chicken);
                     this.throwableObjects[0].bottleSplash(isThrow);
                     this.isThrow = false;
                 }
@@ -159,8 +166,6 @@ class World {
     //     });
     // }
 
-
-
     addCoins() {
         for (let i = 0; i < 5; i++) {
             let x = -500 + Math.random() * 2500;
@@ -185,12 +190,23 @@ class World {
 
     addChickens() {
         for (let i = 0; i < 10; i++) {
-            let x = -500 + Math.random() * 2500;
+            let minLeftBoundary = 1750;
+            let maxRightBoundary = 3500;
+            let x = minLeftBoundary + Math.random() * (maxRightBoundary - minLeftBoundary);
             let chicken = new Chicken();
             chicken.x = x;
             this.level.enemies.push(chicken);
-            // console.log('Chicken produziert :*');
+        }
+    }
 
+    addSmallChickens() {
+        for (let i = 0; i < 10; i++) {
+            let minLeftBoundary = 1750;
+            let maxRightBoundary = 3500;
+            let x = minLeftBoundary + Math.random() * (maxRightBoundary - minLeftBoundary);
+            let smallChicken = new SmallChicken();
+            smallChicken.x = x;
+            this.level.enemies.push(smallChicken);
         }
     }
 
@@ -198,7 +214,6 @@ class World {
         this.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
                 this.collectCoin(coin);
-                // console.log('Coin collected');
             }
         });
     }
@@ -207,7 +222,6 @@ class World {
         this.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle)) {
                 this.collectBottle(bottle);
-                // console.log('Bottle collected');
             }
         });
     }
@@ -217,7 +231,6 @@ class World {
         if (index > -1) {
             this.coins.splice(index, 1);
             this.coinBar.setPercentage(5 - this.coins.length, 5);
-            // console.log('Coin deleted');
         }
     }
 
@@ -227,9 +240,6 @@ class World {
             this.bottles.splice(index, 1);
             this.bottleBar.setPercentage(10 - this.bottles.length, 10);
             this.playerInventory.push('bottle');
-            // console.log('Bottle deleted');
-            // console.log(this.bottles.length);
-            // console.log(this.playerInventory.length);
         }
     }
 
@@ -237,25 +247,19 @@ class World {
         if (this.keyboard.D && this.playerInventory.length > 0 && this.throwableObjects.length < 1) {
             let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
             this.throwableObjects.push(bottle);
-
             this.playerInventory.pop();
         }
     }
 
     draw() {
-        // console.log('Münzleiste: ', this.bottleBar);
-
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
         this.ctx.translate(this.camera_x, 0);
-
 
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.throwableObjects);
 
-
-        this.ctx.translate(-this.camera_x, 0); // statusbar field
+        this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.statusBar);
         this.drawLifeBarText();
         this.addToMap(this.coinBar);
@@ -263,9 +267,7 @@ class World {
         this.addToMap(this.bottleBar);
         this.drawBottleBarText();
         this.toggleBoss();
-        this.ctx.translate(this.camera_x, 0); // statusbar field
-
-
+        this.ctx.translate(this.camera_x, 0);
 
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
@@ -274,15 +276,11 @@ class World {
 
         this.ctx.translate(-this.camera_x, 0);
 
-
-
         let self = this;
         requestAnimationFrame(function () {
             self.draw();
         });
     }
-
-
 
     addObjectsToMap(objects) {
         objects.forEach(object => {
