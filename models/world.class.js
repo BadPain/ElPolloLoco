@@ -105,7 +105,9 @@ class World {
     checkChickenCollisionsUp() {
         this.level.enemies.forEach(chicken => {
             if (this.character.isColliding(chicken)) {
-                if (this.character.isAboveGround() && this.character.speedY < 0) {
+                if (chicken instanceof Endboss) {
+                    return;
+                } else if (this.character.isAboveGround() && this.character.speedY < 0) {
                     this.chicken = chicken;
                     this.dieAnimation(this.chicken);
                 }
@@ -137,7 +139,9 @@ class World {
     checkBottleCollisions() {
         this.level.enemies.forEach(chicken => {
             if (this.throwableObjects.length > 0) {
-                if (this.throwableObjects[0].isColliding(chicken)) {
+                if ((chicken instanceof Endboss)) {
+                    this.checkBottleCollisionBoss();
+                } else if (this.throwableObjects[0].isColliding(chicken)) {
                     let isThrow = true;
                     this.chicken = chicken;
                     this.dieAnimation(this.chicken);
@@ -147,6 +151,33 @@ class World {
             }
         });
     }
+
+    checkBottleCollisionBoss() {
+        if (this.throwableObjects.length > 0) {
+            let bottle = this.throwableObjects[0];
+    
+            this.level.enemies.forEach(enemy => {
+                if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
+                    let isThrow = true;
+                    enemy.isHurtBoss();
+                    bottle.bottleSplash(isThrow);
+                    this.isThrow = false;
+                }
+            });
+        }
+    }
+
+    // checkBottleCollisionBoss() {
+    //     if (this.throwableObjects.length > 0) {
+    //         if (this.throwableObjects[0].isColliding(Endboss)) {
+    //             let isThrow = true;
+    //             this.endboss = endboss;
+    //             this.endboss.isDead();
+    //             this.throwableObjects[0].bottleSplash(isThrow);
+    //             this.isThrow = false;
+    //         }
+    //     }
+    // }
 
     removeNotCollisionBottle() {
         if (this.throwableObjects.length > 0) {
@@ -346,7 +377,9 @@ class World {
         if (this.character.x > 2500 && !this.level.enemies[2].isActive) {
             this.level.enemies[2].isActive = true;
             this.toggleBossBarBegin = true;
-            // this.level.enemies[2].animate();
+            this.level.enemies[2].animate();
+            console.log('Boss ist aktiv!');
+            
         }
     }
 
