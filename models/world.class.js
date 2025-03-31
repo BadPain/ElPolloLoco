@@ -1,6 +1,6 @@
 class World {
-    character = new Character();
-    level = level1;
+    character;
+    level;
     canvas;
     ctx;
     keyboard;
@@ -18,12 +18,16 @@ class World {
     totalBottles = 10;
     playerInventory = [];
     showBossBar = false;
+    isActive = false;
 
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.character = new Character();
+        this.level = level1;
+        // this.endboss = new Endboss();
         this.initFullscreenListener();
         this.draw();
         this.setWorld();
@@ -50,7 +54,7 @@ class World {
             this.checkChickenCollisionsUp();
             this.checkBottleCollisions();
             this.removeNotCollisionBottle();
-            this.toggleBoss();
+            this.activeBoss();
             this.checkESC();
         }, 10);
         setInterval(() => {
@@ -66,6 +70,9 @@ class World {
         // console.log(this.character.isColliding(chicken), 'isColliding with chicken');
         // console.log(this.character.isAboveGround(), 'isAboveGround');
         // console.log(this.character.isFallingDown(), 'isFallingDown');
+        // console.log(world.isActive, 'isActive');
+        // console.log(this.endboss.isActive, 'isActiveEndboss');
+
     }
 
     initFullscreenListener() {
@@ -85,7 +92,6 @@ class World {
             document.exitFullscreen();
         }
     }
-
 
     checkCollisions() {
         this.level.enemies.forEach(enemies => {
@@ -266,15 +272,23 @@ class World {
         this.drawCoinBarText();
         this.addToMap(this.bottleBar);
         this.drawBottleBarText();
-        this.toggleBoss();
+        this.toggleBossBar();
         this.ctx.translate(this.camera_x, 0);
 
         this.addToMap(this.character);
-        this.addObjectsToMap(this.level.enemies);
+
+        let boss = this.level.enemies.find(e => e instanceof Endboss);
+        if (boss) {
+            this.addToMap(boss);
+        }
+        this.addObjectsToMap(this.level.enemies.filter(e => !(e instanceof Endboss)));
+
+        // this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.coins);
         this.addObjectsToMap(this.bottles);
 
         this.ctx.translate(-this.camera_x, 0);
+
 
         let self = this;
         requestAnimationFrame(function () {
@@ -328,11 +342,18 @@ class World {
         }
     }
 
-    toggleBoss() {
-        if (this.character.x > 1500 && !this.showBossBar) {
+    activeBoss() {
+        if (this.character.x > 2500 && !this.level.enemies[2].isActive) {
+            this.level.enemies[2].isActive = true;
+            this.toggleBossBarBegin = true;
+            // this.level.enemies[2].animate();
+        }
+    }
+
+    toggleBossBar() {
+        if (this.toggleBossBarBegin == true) {
             this.addToMap(this.bossBar);
             this.drawBossBarText();
-            this.showBossBar = true;
         }
     }
 

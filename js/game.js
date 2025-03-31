@@ -2,10 +2,9 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 window.backgroundMusic = new Audio('audio/backgroundmusic.mp3');
-window.backgroundMusic.volume = 0.1;
+window.backgroundMusic.volume = 0.0; // Testzwecke
+// window.backgroundMusic.volume = 0.1;
 window.backgroundMusic.loop = true;
-
-
 
 function toStartAGame() {
     console.log(document.getElementById("panelMain"));
@@ -17,6 +16,14 @@ function toStartAGame() {
     document.getElementById("panelMain").style.display = "flex";
     playBackgroundMusic();
     init();
+}
+
+function init() {
+    canvas = document.getElementById("canvas");
+    world = new World(canvas, keyboard);
+    // world.endboss = new Endboss(world);
+    // console.log('Endboss is', world.endboss);
+    console.log('My Character is', world.character);
 }
 
 function playBackgroundMusic() {
@@ -98,11 +105,6 @@ function play() {
     });
 }
 
-function init() {
-    canvas = document.getElementById("canvas");
-    world = new World(canvas, keyboard);
-    console.log('My Character is', world.character);
-}
 
 window.addEventListener("keydown", (e) => {
     if (e.keyCode == 39) {

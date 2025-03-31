@@ -88,8 +88,10 @@ class Character extends MovableObject {
         this.applyGravity();
         this.walking_sound = new Audio('audio/walk_new3.mp3');
         this.jumping_sound = new Audio('audio/jipii3.mp3');
-        this.walking_sound.volume = 0.3;
-        this.jumping_sound.volume = 0.1;
+        this.walking_sound.volume = 0.0; // Testzwecke
+        this.jumping_sound.volume = 0.0; // Testzwecke
+        // this.walking_sound.volume = 0.3;
+        // this.jumping_sound.volume = 0.1;
         this.animate();
         this.isFallingDown();
     }

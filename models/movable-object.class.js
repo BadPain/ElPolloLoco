@@ -11,7 +11,7 @@ class MovableObject extends DrawableObject {
         left: 0,
         right: 0
     };
-    
+
     applyGravity() {
         setInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
@@ -70,7 +70,8 @@ class MovableObject extends DrawableObject {
             this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }
 
-    playAnimation(images, speed) {
+    playAnimation(images) {
+        (images.length > 0)
         let i = this.currentImage % images.length;
         let path = images[i];
         this.img = this.imageCache[path];
