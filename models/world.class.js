@@ -20,14 +20,13 @@ class World {
     showBossBar = false;
     isActive = false;
 
-
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.character = new Character();
         this.level = level1;
-        // this.endboss = new Endboss();
+        this.boss = this.level.enemies.find(enemy => enemy instanceof Endboss);
         this.initFullscreenListener();
         this.draw();
         this.setWorld();
@@ -39,6 +38,8 @@ class World {
         this.addSmallChickens();
         this.coinBar.totalCoins = 5;
         this.bottleBar.totalBottles = 10;
+        this.isBossActivated = false;
+        this.toggleBossBarBegin = false;
     }
 
     setWorld() {
@@ -72,7 +73,6 @@ class World {
         // console.log(this.character.isFallingDown(), 'isFallingDown');
         // console.log(world.isActive, 'isActive');
         // console.log(this.endboss.isActive, 'isActiveEndboss');
-
     }
 
     initFullscreenListener() {
@@ -95,7 +95,7 @@ class World {
 
     checkCollisions() {
         this.level.enemies.forEach(enemies => {
-            if (this.character.isColliding(enemies) && this.character.isOnGround() && !this.character.isFallingDown()) {
+            if (this.character.isColliding(enemies) && this.character.isOnGround() && !this.character.isFallingDown() && !enemies.isDead) {
                 this.character.hit(enemies);
                 this.statusBar.setPercentage(this.character.energy);
             }
@@ -155,29 +155,25 @@ class World {
     checkBottleCollisionBoss() {
         if (this.throwableObjects.length > 0) {
             let bottle = this.throwableObjects[0];
-    
+            if (this.boss.energy <= 0) {
+                this.boss.isDead = true;
+                console.log('Boss ist tot!');
+                return;
+            }
             this.level.enemies.forEach(enemy => {
-                if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
+                if (enemy instanceof Endboss && bottle.isColliding(enemy) && !bottle.hasHit) {
+                    console.log(this.boss.energy, 'Bossenergy');
+                    bottle.hasHit = true;
                     let isThrow = true;
-                    enemy.isHurtBoss();
+                    this.boss.hit(bottle);
                     bottle.bottleSplash(isThrow);
+                    this.bossBar.setPercentage(this.boss.energy);
                     this.isThrow = false;
+                    console.log(this.boss.energy, 'Bossenergy');
                 }
             });
         }
     }
-
-    // checkBottleCollisionBoss() {
-    //     if (this.throwableObjects.length > 0) {
-    //         if (this.throwableObjects[0].isColliding(Endboss)) {
-    //             let isThrow = true;
-    //             this.endboss = endboss;
-    //             this.endboss.isDead();
-    //             this.throwableObjects[0].bottleSplash(isThrow);
-    //             this.isThrow = false;
-    //         }
-    //     }
-    // }
 
     removeNotCollisionBottle() {
         if (this.throwableObjects.length > 0) {
@@ -194,14 +190,6 @@ class World {
             this.throwableObjects.splice(this.throwableObjects.indexOf(bottleRemove), 1);
         });
     }
-
-    // chickenDie() {
-    //     this.level.enemies.forEach((enemy, index) => {
-    //         if (this.character.isColliding(enemy)) {
-    //             this.level.enemies.splice(index, 1);
-    //         }
-    //     });
-    // }
 
     addCoins() {
         for (let i = 0; i < 5; i++) {
@@ -368,18 +356,16 @@ class World {
             this.ctx.textAlign = 'left';
             this.ctx.textBaseline = 'top';
             let textWidth = this.ctx.measureText('nomnom').width;
-            let x = 720 - textWidth - 10;
-            this.ctx.fillText('nomnom', x, 50);
+            let x = 720 - textWidth - 55;
+            this.ctx.fillText('Bosslife', x, 43);
         }
     }
 
     activeBoss() {
-        if (this.character.x > 2500 && !this.level.enemies[2].isActive) {
-            this.level.enemies[2].isActive = true;
+        if (this.character.x > 2000 && !this.isBossActivated) {
             this.toggleBossBarBegin = true;
-            this.level.enemies[2].animate();
-            console.log('Boss ist aktiv!');
-            
+            this.isBossActivated = true;
+            this.boss.animate();
         }
     }
 
@@ -413,5 +399,11 @@ class World {
     flipImageBack(mo) {
         this.ctx.restore();
         mo.x = mo.x * -1;
+    }
+
+    toWinAGame() {
+        document.getElementById("toWinAGame").style.display = "block";
+        console.log('You Win!');
+        
     }
 }

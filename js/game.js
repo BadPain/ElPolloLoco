@@ -9,20 +9,25 @@ window.backgroundMusic.loop = true;
 function toStartAGame() {
     console.log(document.getElementById("panelMain"));
     // document.getElementById("startButton").style.display = "none";
-    document.getElementById("startScreen").style.display = "none";
+    // document.getElementById("startScreen").style.display = "none";
     document.getElementById("canvas").style.display = "block";
     document.getElementById("closeControls").style.display = "none";
-    document.getElementById("controls").style.display = "block"
+    document.getElementById("controls").style.display = "block";
     document.getElementById("panelMain").style.display = "flex";
+    displayNoneStart();
     playBackgroundMusic();
     init();
+}
+
+function displayNoneStart() {
+    document.getElementById("startButton").style.display = "none";
+    document.getElementById("controlsButton").style.display = "none";
+    document.getElementById("startImage").style.display = "none";
 }
 
 function init() {
     canvas = document.getElementById("canvas");
     world = new World(canvas, keyboard);
-    // world.endboss = new Endboss(world);
-    // console.log('Endboss is', world.endboss);
     console.log('My Character is', world.character);
 }
 

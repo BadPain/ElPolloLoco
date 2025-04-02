@@ -52,6 +52,10 @@ class Endboss extends MovableObject {
         'img/main/4_enemie_boss_chicken/5_dead/G26.png'
     ];
 
+    IMAGES_GAMEOVER = [
+        'img/main/9_intro_outro_screens/game_over/game over.png'
+    ];
+
     constructor() {
         super().loadImage('img/main/4_enemie_boss_chicken/1_walk/G2.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -60,90 +64,12 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
         this.x = 3000;
-        this.animate();
         this.energy = 100;
         this.lastHit = 0;
-        this.speed = 0.4;
-        this.isActive = false;
-    }
-
-    playAnimation(images) {
-        if (!images || images.length === 0) return;
-        if (this.animationCounter === undefined) {
-            this.animationCounter = 0;
-        }
-        let animationSpeed = 5;
-        if (this.animationCounter % animationSpeed === 0) {
-            let i = this.currentImage % images.length;
-            let path = images[i];
-            this.img = this.imageCache[path];
-            this.currentImage++;
-        }
-        this.animationCounter++;
-    }
-
-    playAnimationOnce(images, callback) {
-        if (!images || images.length === 0) return;
-    
-        let i = this.currentImage % images.length;
-        let path = images[i];
-        this.img = this.imageCache[path];
-    
-        if (this.currentImage < images.length - 1) {
-            this.currentImage++;
-        } else {
-            this.currentImage = 0;
-            if (callback) callback();
-        }
-    }
-
-    // playAnimation(images) {
-    //     if (!images || images.length === 0) return;
-    
-    //     this.animationSpeed = 5;
-    //     let i = this.currentImage % images.length;
-    //     let path = images[i];
-    
-    //     if (this.imageCache[path]) {
-    //         this.img = this.imageCache[path];
-    //     } else {
-    //         console.warn("Bild nicht gefunden:", path);
-    //     }
-    
-    //     this.currentImage++;
-    // }
-
-    // playAnimation(images) {
-    //     (images.length > 0)
-    //     let i = this.currentImage % images.length;
-    //     let path = images[i];
-    //     this.img = this.imageCache[path];
-    //     this.currentImage++;
-    //     this.animationSpeed = 1;
-    // }
-
-    isDead() {
-        return this.energy == 0;
-    }
-
-    isHurtBoss() {
-        this.playAnimationOnce(this.IMAGES_HURT, () => {
-            this.playAnimation(this.IMAGES_WALK);
-        });
-    }
-
-    hit() {
-        this.energy -= 20;
-        if (this.energy < 0) {
-            this.energy = 0;
-        } else {
-            this.lastHit = new Date().getTime();
-        }
-    }
-
-    moveLeft() {
-        console.log("Boss bewegt sich!");
-        this.x -= this.speed;
+        this.speed = 20;
+        this.isBossActivated = false;
+        this.isDead = false;
+        this.hasWon = false;
     }
 
     takeDamage(amount) {
@@ -152,36 +78,24 @@ class Endboss extends MovableObject {
     }
 
     animate() {
-        setInterval(() => {
-            if (!this.isDead) {
-                this.moveLeft(); 
-                this.playAnimation(this.IMAGES_WALK);
-            }
-        }, 1000 / 60);
+        setInterval(() => this.handleAnimationBoss(), 250);
+        this.isBossActivated = true;
     }
 
-    // animate() {
-    //     setInterval(() => {
-    //         if (this.isActive && this.x > -1000) {
-    //             this.beginAnimation();
-    //             this.moveLeft();
-    //             // console.log('New settings are ok!');
-    //         }
-    //     }, 200);
-    // }
-
-    beginAnimation() {
-        if (this.isDead()) {
+    handleAnimationBoss() {
+        if (this.isDead && this.energy == 0 && !this.hasWon) {
+            this.hasWon = true;
             this.playAnimation(this.IMAGES_DEAD);
-            this.idleTime = 0;
-        } else if (this.isHurtBoss()) {
+            setTimeout(() => {
+                world.toWinAGame();
+            }, 1000);
+        } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
-            this.idleTime = 0;
-        } else if (this.isActive) {
-            console.log("Boss läuft → Animation aktiv!");
+        } else if (this.isBossActivated && world.character.x < 2549) {
+            this.playAnimation(this.IMAGES_ALERT);
+        } else if (this.isBossActivated && world.character.x > 2550) {
             this.playAnimation(this.IMAGES_WALKING);
             this.moveLeft();
-            this.idleTime = 0;
         }
     }
 }

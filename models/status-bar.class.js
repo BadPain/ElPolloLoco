@@ -19,7 +19,6 @@ class StatusBar extends DrawableObject {
         this.width = 200;
         this.height = 50;
         this.setPercentage(100);
-
     }
 
     setPercentage(percentage) {

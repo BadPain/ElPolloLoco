@@ -163,6 +163,14 @@ canvas {
     height: 15px;
 }
 
+.toWinAGame {
+    position: absolute;
+    width: 720px;
+    height: 480px;
+    top: 45px;
+    display: none;
+}
+
 @media only screen and (max-width: 720px) {
     canvas {
         width: 100%;

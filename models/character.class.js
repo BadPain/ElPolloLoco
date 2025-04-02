@@ -94,56 +94,8 @@ class Character extends MovableObject {
         // this.jumping_sound.volume = 0.1;
         this.animate();
         this.isFallingDown();
+        this.idleTime = 0;
     }
-
-    //     animate() {
-    //         setInterval(() => {
-    //             this.walking_sound.pause();
-    //             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-    //                 this.moveRight();
-    //                 this.otherDirection = false;
-    //                 // this.walking_sound.play();
-    //             }
-    //             if (this.world.keyboard.LEFT && this.x > -1000) {
-    //                 this.moveLeft();
-    //                 this.otherDirection = true;
-    //                 // this.walking_sound.play();
-    //             }
-    //             if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-    //                 this.jump();
-    //                 // this.jumping_sound.play();
-    //             }
-    //             this.world.camera_x = -this.x + 100;
-    //         }, 1000 / 60);
-    //         let idleTime = 0;
-    //         setInterval(() => {
-    //             if (this.isDead()) {
-    //                 this.playAnimation(this.IMAGES_DEAD);
-    //                 idleTime = 0;
-    //             } else if (this.isHurt()) {
-    //                 this.playAnimation(this.IMAGES_HURT);
-    //                 idleTime = 0;
-    //             } else if (this.isAboveGround()) {
-    //                 this.playAnimation(this.IMAGES_JUMPING);
-    //                 if (this.currentImage >= 3 && this.speedY > 0) {
-    //                     this.currentImage = 3;
-    //                 }
-    //                 idleTime = 0;
-    //             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-    //                 this.playAnimation(this.IMAGES_WALKING);
-    //                 idleTime = 0;
-
-    //             } else if (this.isOnGround()) {
-    //                 idleTime += 100;
-    //                 if (idleTime >= 10000) {
-    //                     this.playAnimation(this.IMAGES_LONGIDLE, 10);
-    //                 } else {
-    //                     this.playAnimation(this.IMAGES_IDLE);
-    //                 }
-    //             }
-    //         }, 100);
-    //     }
-    // }
 
     animate() {
         setInterval(() => this.handleMovement(), 1000 / 60);

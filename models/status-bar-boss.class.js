@@ -14,7 +14,7 @@ class BossBar extends DrawableObject {
     constructor() {
         super();
         this.loadImages(this.IMAGES)
-        this.x = 250;
+        this.x = 475;
         this.y = 20;
         this.width = 200;
         this.height = 50;
