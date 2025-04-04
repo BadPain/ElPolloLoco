@@ -70,6 +70,8 @@ class Endboss extends MovableObject {
         this.isBossActivated = false;
         this.isDead = false;
         this.hasWon = false;
+        this.bossIsWalking = false;
+        this.alertPlayed = false;
     }
 
     takeDamage(amount) {
@@ -78,8 +80,19 @@ class Endboss extends MovableObject {
     }
 
     animate() {
+        setInterval(() => this.handleMovementBoss(), 250);
         setInterval(() => this.handleAnimationBoss(), 250);
         this.isBossActivated = true;
+        console.log(this.isBossActivated, 'isBossActivated');
+
+    }
+
+    handleMovementBoss() {
+        if (this.isBossActivated && this.bossIsWalking) {
+            this.alertPlayed = true
+            this.playAnimation(this.IMAGES_WALKING);
+            this.moveLeft();
+        }
     }
 
     handleAnimationBoss() {
@@ -88,14 +101,25 @@ class Endboss extends MovableObject {
             this.playAnimation(this.IMAGES_DEAD);
             setTimeout(() => {
                 world.toWinAGame();
+                world.stopAllIntervals();
             }, 1000);
         } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
-        } else if (this.isBossActivated && world.character.x < 2549) {
+        } else if (this.isBossActivated && Math.abs(this.x - world.character.x) < 150 && this.bossIsWalking) {
+            setInterval(() => {
+                this.isAttacking = true;
+                this.bossIsWalking = false;
+                this.playAnimation(this.IMAGES_ATTACK);
+                console.log('Boss is attacking');
+            }, 500);
+            this.bossIsWalking = true;
+            this.isAttacking = false;
+        } else if (this.isBossActivated && Math.abs(this.x - world.character.x) < 200 && !this.isAttacking) {
+            this.bossIsWalking = true;
+            console.log('Boss is walking');
+        } else if (this.isBossActivated && this.x - world.character.x < 500 && !this.bossIsWalking && !this.alertPlayed) {
             this.playAnimation(this.IMAGES_ALERT);
-        } else if (this.isBossActivated && world.character.x > 2550) {
-            this.playAnimation(this.IMAGES_WALKING);
-            this.moveLeft();
+            console.log('Boss is alert');
         }
     }
 }

@@ -362,10 +362,11 @@ class World {
     }
 
     activeBoss() {
-        if (this.character.x > 2000 && !this.isBossActivated) {
+        if (!this.isBossActivated && Math.abs(this.boss.x - world.character.x) < 700) {
             this.toggleBossBarBegin = true;
             this.isBossActivated = true;
             this.boss.animate();
+            console.log(this.isBossActivated, 'isBossActivated first time');
         }
     }
 
@@ -406,4 +407,17 @@ class World {
         console.log('You Win!');
         
     }
+
+    toLoseAGame() {
+        document.getElementById("toLoseAGame").style.display = "block";
+        console.log('You Lose!');
+    }
+
+    stopAllIntervals() {
+        let highestIntervalId = setInterval(() => { }, 1000);
+        for (let i = 0; i < highestIntervalId; i++) {
+            clearInterval(i);
+        }
+    }
+
 }

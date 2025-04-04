@@ -7,9 +7,9 @@ class Character extends MovableObject {
 
     offset = {
         top: 60,
+        right: 20,
         bottom: 0,
-        left: 20,
-        right: 20
+        left: 20
     }
 
     IMAGES_WALKING = [
@@ -95,6 +95,7 @@ class Character extends MovableObject {
         this.animate();
         this.isFallingDown();
         this.idleTime = 0;
+        this.energy = 100000;
     }
 
     animate() {
@@ -123,7 +124,12 @@ class Character extends MovableObject {
 
     handleAnimation() {
         if (this.isDead()) {
+            this.hasLose = true;
             this.playAnimation(this.IMAGES_DEAD);
+            setTimeout(() => {
+                this.world.toLoseAGame();
+                this.world.stopAllIntervals();
+            }, 1000);
             this.idleTime = 0;
         } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
