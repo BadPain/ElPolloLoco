@@ -20,6 +20,7 @@ class World {
     showBossBar = false;
     isActive = false;
 
+
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -404,12 +405,15 @@ class World {
 
     toWinAGame() {
         document.getElementById("toWinAGame").style.display = "block";
+        document.getElementById("restartButton").style.display = "block";
         console.log('You Win!');
-        
+
     }
 
     toLoseAGame() {
         document.getElementById("toLoseAGame").style.display = "block";
+        document.getElementById("restartButton").style.display = "block";
+
         console.log('You Lose!');
     }
 
@@ -419,5 +423,4 @@ class World {
             clearInterval(i);
         }
     }
-
 }

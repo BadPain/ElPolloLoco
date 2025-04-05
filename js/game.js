@@ -19,6 +19,28 @@ function toStartAGame() {
     init();
 }
 
+function toRestartAGame() {
+    document.getElementById("toWinAGame").style.display = "none";
+    document.getElementById("toLoseAGame").style.display = "none";
+    document.getElementById("restartButton").style.display = "none";
+    if (world && world.boss) {
+        world.boss.reset();
+    }
+    keyboard.reset();
+    world = null;
+    displayNoneStart();
+    playBackgroundMusic();
+    init();
+}
+
+function stopAllIntervals() {
+    console.log('stopAllIntervals game.js');
+    let highestIntervalId = setInterval(() => { }, 1000);
+    for (let i = 0; i < highestIntervalId; i++) {
+        clearInterval(i);
+    }
+}
+
 function displayNoneStart() {
     document.getElementById("startButton").style.display = "none";
     document.getElementById("controlsButton").style.display = "none";
@@ -26,6 +48,7 @@ function displayNoneStart() {
 }
 
 function init() {
+    initLevel1();
     canvas = document.getElementById("canvas");
     world = new World(canvas, keyboard);
     console.log('My Character is', world.character);
@@ -45,13 +68,13 @@ function closeControls() {
 
 function fullscreen() {
     if (document.fullscreenElement) {
-      document.exitFullscreen();
-      document.getElementById("fullscreen").style.backgroundImage = "url('img/vollbild.png')";
+        document.exitFullscreen();
+        document.getElementById("fullscreen").style.backgroundImage = "url('img/vollbild.png')";
     } else {
-      document.getElementById("container").requestFullscreen();
-      document.getElementById("fullscreen").style.backgroundImage = "url('img/minimieren.png')";
+        document.getElementById("container").requestFullscreen();
+        document.getElementById("fullscreen").style.backgroundImage = "url('img/minimieren.png')";
     }
-  }
+}
 
 function enterFullscreen(element) {
     if (element.requestFullscreen) {

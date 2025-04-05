@@ -123,6 +123,8 @@ class Character extends MovableObject {
     }
 
     handleAnimation() {
+        if (this.hasLose) return;
+
         if (this.isDead()) {
             this.hasLose = true;
             this.playAnimation(this.IMAGES_DEAD);

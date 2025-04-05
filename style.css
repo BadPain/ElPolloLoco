@@ -179,6 +179,21 @@ canvas {
     display: none;
 }
 
+#restartButton {
+    position: absolute;
+    top: 100px;
+    background-color: #d6d623;
+    color: #000000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+}
+#restartButton:hover {
+    background-color: #4ed753;
+}
+
 @media only screen and (max-width: 720px) {
     canvas {
         width: 100%;

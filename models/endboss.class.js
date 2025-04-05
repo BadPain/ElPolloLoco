@@ -74,6 +74,17 @@ class Endboss extends MovableObject {
         this.alertPlayed = false;
     }
 
+    reset() {
+        this.x = 3000;
+        this.y = 50;
+        this.energy = 100;
+        this.lastHit = 0;
+        this.isDead = false;
+        this.hasWon = false;
+        this.bossIsWalking = false;
+        this.alertPlayed = false;
+    }
+
     takeDamage(amount) {
         this.energy -= amount;
         this.lastHit = new Date().getTime();
