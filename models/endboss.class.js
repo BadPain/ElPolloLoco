@@ -69,20 +69,23 @@ class Endboss extends MovableObject {
         this.speed = 20;
         this.isBossActivated = false;
         this.isDead = false;
-        this.hasWon = false;
+        // this.hasWon = false;
         this.bossIsWalking = false;
         this.alertPlayed = false;
+        this.isAttacking = false;
     }
 
     reset() {
         this.x = 3000;
-        this.y = 50;
         this.energy = 100;
         this.lastHit = 0;
+        this.speed = 20;
+        this.isBossActivated = false;
         this.isDead = false;
         this.hasWon = false;
         this.bossIsWalking = false;
         this.alertPlayed = false;
+        this.isAttacking = false;
     }
 
     takeDamage(amount) {
@@ -91,11 +94,15 @@ class Endboss extends MovableObject {
     }
 
     animate() {
-        setInterval(() => this.handleMovementBoss(), 250);
-        setInterval(() => this.handleAnimationBoss(), 250);
+        setInterval(() => {
+            this.handleMovementBoss();
+            this.checkAttackTrigger();
+        }, 250);
+        setInterval(() => {
+            this.handleAnimationBoss();
+        }, 250);
         this.isBossActivated = true;
         console.log(this.isBossActivated, 'isBossActivated');
-
     }
 
     handleMovementBoss() {
@@ -107,30 +114,90 @@ class Endboss extends MovableObject {
     }
 
     handleAnimationBoss() {
-        if (this.isDead && this.energy == 0 && !this.hasWon) {
-            this.hasWon = true;
+        console.log(this.isDead, 'isDead', this.energy, 'energy', this.isAttacking, 'isAttacking', this.bossIsWalking, 'bossIsWalking', this.isBossActivated , 'isBossActivated', this.alertPlayed, 'alertPlayed');
+        
+        if (this.isDead && this.energy == 0) {
+            this.isDead = true;
+            console.log(this.isDead, 'isDead');
+            
+            this.isAttacking = false;
+            this.bossIsWalking = false;
+
+            // this.hasWon = true;
             this.playAnimation(this.IMAGES_DEAD);
+
             setTimeout(() => {
+                console.log(world.toWinAGame, 'toWinAGame');
+                
                 world.toWinAGame();
                 world.stopAllIntervals();
             }, 1000);
         } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
-        } else if (this.isBossActivated && Math.abs(this.x - world.character.x) < 150 && this.bossIsWalking) {
-            setInterval(() => {
-                this.isAttacking = true;
-                this.bossIsWalking = false;
-                this.playAnimation(this.IMAGES_ATTACK);
-                console.log('Boss is attacking');
-            }, 500);
+        } else if (this.isAttacking) {
+            this.playAnimation(this.IMAGES_ATTACK);
+        } else if (this.isBossActivated && Math.abs(this.x - world.character.x) < 300 && !this.isAttacking) {
             this.bossIsWalking = true;
-            this.isAttacking = false;
-        } else if (this.isBossActivated && Math.abs(this.x - world.character.x) < 200 && !this.isAttacking) {
-            this.bossIsWalking = true;
-            console.log('Boss is walking');
+            this.playAnimation(this.IMAGES_WALKING);
         } else if (this.isBossActivated && this.x - world.character.x < 500 && !this.bossIsWalking && !this.alertPlayed) {
             this.playAnimation(this.IMAGES_ALERT);
             console.log('Boss is alert');
+        }
+    }
+
+    // handleAnimationBoss() {
+    //     if (this.isDead && this.energy == 0 && !this.hasWon) {
+    //         this.hasWon = true;
+    //         this.playAnimation(this.IMAGES_DEAD);
+    //         setTimeout(() => {
+    //             world.toWinAGame();
+    //             world.stopAllIntervals();
+    //         }, 3000);
+    //     } else if (this.isHurt()) {
+    //         this.playAnimation(this.IMAGES_HURT);
+    //     } else if (this.isBossActivated && Math.abs(this.x - world.character.x) < 150 && this.bossIsWalking) {
+    //         this.isAttacking = true;
+    //         this.bossIsWalking = false;
+    //         this.playAnimation(this.IMAGES_ATTACK);
+    //         console.log('Boss is attacking');
+
+    //         setTimeout(() => {
+    //             this.isAttacking = false;
+    //             this.bossIsWalking = true;
+    //             console.log('Boss finished attack');
+    //         }, 5000);
+
+    //         // setInterval(() => {
+    //         //     this.isAttacking = true;
+    //         //     this.bossIsWalking = false;
+    //         //     this.playAnimation(this.IMAGES_ATTACK);
+    //         //     console.log('Boss is attacking');
+    //         // }, 500);
+    //         // this.bossIsWalking = true;
+    //         // this.isAttacking = false;
+    //     } else if (this.isBossActivated && Math.abs(this.x - world.character.x) < 200 && !this.isAttacking) {
+    //         this.bossIsWalking = true;
+    //         console.log('Boss is walking');
+    //     } else if (this.isBossActivated && this.x - world.character.x < 500 && !this.bossIsWalking && !this.alertPlayed) {
+    //         this.playAnimation(this.IMAGES_ALERT);
+    //         console.log('Boss is alert');
+    //     }
+    // }
+
+    checkAttackTrigger() {
+        if (this.isBossActivated && (this.energy > 0) && !this.isAttacking && Math.abs(this.x - world.character.x) < 150) {
+            this.isAttacking = true;
+            this.bossIsWalking = false;
+            console.log('Boss is attacking');
+
+            setTimeout(() => {
+                if ((this.energy > 0)) {
+                    this.isAttacking = false;
+                    this.bossIsWalking = true;
+                    world.checkBossAttacking = false;
+                    console.log('Boss finished attack');
+                }
+            }, 5000);
         }
     }
 }

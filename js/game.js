@@ -1,13 +1,15 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let intervalIds = [];
+let timeoutIds = [];
 window.backgroundMusic = new Audio('audio/backgroundmusic.mp3');
 window.backgroundMusic.volume = 0.0; // Testzwecke
 // window.backgroundMusic.volume = 0.1;
 window.backgroundMusic.loop = true;
 
 function toStartAGame() {
-    console.log(document.getElementById("panelMain"));
+    console.log(document.getElementById("panelMain", 'StartParameter'));
     // document.getElementById("startButton").style.display = "none";
     // document.getElementById("startScreen").style.display = "none";
     document.getElementById("canvas").style.display = "block";
@@ -20,6 +22,8 @@ function toStartAGame() {
 }
 
 function toRestartAGame() {
+    console.log('--- GAME RESTART ---');
+    document.getElementById("canvas").getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     document.getElementById("toWinAGame").style.display = "none";
     document.getElementById("toLoseAGame").style.display = "none";
     document.getElementById("restartButton").style.display = "none";
@@ -28,9 +32,11 @@ function toRestartAGame() {
     }
     keyboard.reset();
     world = null;
+    console.log(world);
     displayNoneStart();
     playBackgroundMusic();
     init();
+    
 }
 
 function stopAllIntervals() {
@@ -48,6 +54,7 @@ function displayNoneStart() {
 }
 
 function init() {
+    console.log('init() called!');
     initLevel1();
     canvas = document.getElementById("canvas");
     world = new World(canvas, keyboard);
@@ -181,3 +188,25 @@ window.addEventListener("keyup", (e) => {
         keyboard.ESCAPE = false;
     }
 })
+
+
+
+// function setGlobalInterval(fn, time) {
+//     const id = setInterval(fn, time);
+//     intervalIds.push(id);
+//     return id;
+// }
+
+// function setGlobalTimeout(fn, time) {
+//     const id = setTimeout(fn, time);
+//     timeoutIds.push(id);
+//     return id;
+// }
+
+// function clearAllTimers() {
+//     intervalIds.forEach(clearInterval);
+//     timeoutIds.forEach(clearTimeout);
+//     intervalIds = [];
+//     timeoutIds = [];
+//     console.log('Alle Intervalle und Timeouts wurden gecleared.');
+// }

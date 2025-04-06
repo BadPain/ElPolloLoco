@@ -35,12 +35,13 @@ class World {
         this.checkESC();
         this.addCoins();
         this.addBottles();
-        this.addChickens();
-        this.addSmallChickens();
+        // this.addChickens();
+        // this.addSmallChickens();
         this.coinBar.totalCoins = 5;
         this.bottleBar.totalBottles = 10;
         this.isBossActivated = false;
         this.toggleBossBarBegin = false;
+        this.checkBossAttacking = false;
     }
 
     setWorld() {
@@ -58,6 +59,7 @@ class World {
             this.removeNotCollisionBottle();
             this.activeBoss();
             this.checkESC();
+            this.checkBossAttack();
         }, 10);
         setInterval(() => {
             this.mainConsoleLog();
@@ -89,7 +91,6 @@ class World {
 
     checkESC() {
         if (this.keyboard.ESCAPE && document.fullscreenElement) {
-            console.log('ESC');
             document.exitFullscreen();
         }
     }
@@ -114,6 +115,14 @@ class World {
                 }
             }
         });
+    }
+
+    checkBossAttack() {
+        if (this.boss.isAttacking && Math.abs(this.boss.x - world.character.x) < 149 && !this.checkBossAttacking) {
+            this.checkBossAttacking = true;
+            this.character.hit(this.boss);
+            this.statusBar.setPercentage(this.character.energy);
+        }
     }
 
     dieAnimation(chicken) {
@@ -163,14 +172,14 @@ class World {
             }
             this.level.enemies.forEach(enemy => {
                 if (enemy instanceof Endboss && bottle.isColliding(enemy) && !bottle.hasHit) {
-                    console.log(this.boss.energy, 'Bossenergy');
+                    // console.log(this.boss.energy, 'Bossenergy');
                     bottle.hasHit = true;
                     let isThrow = true;
                     this.boss.hit(bottle);
                     bottle.bottleSplash(isThrow);
                     this.bossBar.setPercentage(this.boss.energy);
                     this.isThrow = false;
-                    console.log(this.boss.energy, 'Bossenergy');
+                    // console.log(this.boss.energy, 'Bossenergy');
                 }
             });
         }
@@ -367,7 +376,7 @@ class World {
             this.toggleBossBarBegin = true;
             this.isBossActivated = true;
             this.boss.animate();
-            console.log(this.isBossActivated, 'isBossActivated first time');
+            // console.log(this.isBossActivated, 'isBossActivated first time');
         }
     }
 
@@ -406,15 +415,13 @@ class World {
     toWinAGame() {
         document.getElementById("toWinAGame").style.display = "block";
         document.getElementById("restartButton").style.display = "block";
-        console.log('You Win!');
-
+        // console.log('You Win!');
     }
 
     toLoseAGame() {
         document.getElementById("toLoseAGame").style.display = "block";
         document.getElementById("restartButton").style.display = "block";
-
-        console.log('You Lose!');
+        // console.log('You Lose!');
     }
 
     stopAllIntervals() {
@@ -422,5 +429,6 @@ class World {
         for (let i = 0; i < highestIntervalId; i++) {
             clearInterval(i);
         }
+        console.log(`Alle Intervalle bis ID ${highestId} wurden gecleared.`);
     }
 }
