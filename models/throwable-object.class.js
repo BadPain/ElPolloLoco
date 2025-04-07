@@ -39,32 +39,32 @@ class ThrowableObject extends MovableObject {
         this.isThrown = true;
         this.speedY = -10;
         this.applyGravity();
-        setInterval(() => {
+        setTrackedInterval(() => {
             this.x += 5;
             this.y += this.speedY;
             this.speedY -= 2;
             // this.x += 1;
             // this.y -= -1;
             // this.applyGravity();
-        }, 25);
+        }, 25, 'ThrowInterval');
     }
 
     bottleThrow() {
         if (this.isThrown = true) {
-            setInterval(() => {
+            setTrackedInterval(() => {
                 this.playAnimation(this.IMAGES_BOTTLE);
-            }, 50);
+            }, 50, 'bottleThrowInterval');
         }
     }
 
     bottleSplash(isThrow) {
         if (isThrow) {
-            setInterval(() => {
+            setTrackedInterval(() => {
                 this.playAnimation(this.IMAGES_SPLASH);
             }, 50);
-            setTimeout(() => {
+            setTrackedTimeout(() => {
                 this.removeObjectFromGame();
-            }, 250);
+            }, 250, 'bottleSplash');
         } else {
             if (world.throwableObjects[0].y > 400) {
                 this.removeObjectFromGame();

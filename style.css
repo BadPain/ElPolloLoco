@@ -103,7 +103,7 @@ canvas {
     background-image: url('img/laut.png');
     background-size: cover;
     background-color: transparent;
-    width: 25px; 
+    width: 25px;
     height: 25px;
     border: none;
     cursor: pointer;
@@ -113,7 +113,7 @@ canvas {
     background-image: url('img/vollbild.png');
     background-size: cover;
     background-color: transparent;
-    width: 25px; 
+    width: 25px;
     height: 25px;
     border: none;
     cursor: pointer;
@@ -190,13 +190,101 @@ canvas {
     cursor: pointer;
     display: none;
 }
+
 #restartButton:hover {
     background-color: #4ed753;
 }
 
+#swapYourPhone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#swapYourPhone img {
+    width: 80%;
+    max-width: 480px;
+    height: auto;
+}
+
 @media only screen and (max-width: 720px) {
+    h1 {
+        display: none;
+    }
+
+    .panelMain {
+        display: none !important;
+    }
+
+    #startScreen {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    #startButton {
+        position: absolute;
+        top: 25px;
+        right: 50px;
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 10px 20px;
+    }
+
+    #controlsButton {
+        position: absolute;
+        top: 25px;
+        left: 50px;
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 10px 20px;
+    }
+
+    #restartButton {
+        position: absolute;
+        top: 25px;
+        background-color: #d6d623;
+        color: #000000;
+        padding: 10px 20px;
+    }
+
+    .container {
+        padding-bottom: 0;
+    }
+
+    .startImage {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .toWinAGame {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: auto;
+    }
+
+    .toLoseAGame {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
     canvas {
         width: 100%;
+        height: auto;
+    }
+
+    .footer {
+        display: none;
     }
 }
 
@@ -222,5 +310,58 @@ canvas {
         display: block;
         position: fixed;
         width: 100%;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    #startScreen {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+
+    .startImage,
+    .toWinAGame,
+    .toLoseAGame {
+        width: 100%;
+        height: auto;
+    }
+
+    #startButton,
+    #controlsButton,
+    #restartButton {
+        top: 10px;
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    #controlsButton {
+        left: 20px;
+    }
+
+    #startButton {
+        right: 20px;
+    }
+
+    .title {
+        font-size: 40px;
+    }
+
+    .footerInfo {
+        font-size: 20px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    #startScreen {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #startButton,
+    #controlsButton {
+        position: relative;
+        margin: 10px 0;
     }
 }

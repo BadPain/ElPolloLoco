@@ -99,8 +99,8 @@ class Character extends MovableObject {
     }
 
     animate() {
-        setInterval(() => this.handleMovement(), 1000 / 60);
-        setInterval(() => this.handleAnimation(), 100);
+        setTrackedInterval(() => this.handleMovement(), 1000 / 60, 'Pepe Movement');
+        setTrackedInterval(() => this.handleAnimation(), 100, 'Pepe Animation');
     }
 
     handleMovement() {
@@ -128,10 +128,9 @@ class Character extends MovableObject {
         if (this.isDead()) {
             this.hasLose = true;
             this.playAnimation(this.IMAGES_DEAD);
-            setTimeout(() => {
+            setTrackedTimeout(() => {
                 this.world.toLoseAGame();
-                this.world.stopAllIntervals();
-            }, 1000);
+            }, 1000, 'Pepe Died!');
             this.idleTime = 0;
         } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);

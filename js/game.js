@@ -1,17 +1,16 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
-let intervalIds = [];
-let timeoutIds = [];
+const globalIntervals = [];
+const globalTimeouts = [];
+
+
 window.backgroundMusic = new Audio('audio/backgroundmusic.mp3');
 window.backgroundMusic.volume = 0.0; // Testzwecke
 // window.backgroundMusic.volume = 0.1;
 window.backgroundMusic.loop = true;
 
 function toStartAGame() {
-    console.log(document.getElementById("panelMain", 'StartParameter'));
-    // document.getElementById("startButton").style.display = "none";
-    // document.getElementById("startScreen").style.display = "none";
     document.getElementById("canvas").style.display = "block";
     document.getElementById("closeControls").style.display = "none";
     document.getElementById("controls").style.display = "block";
@@ -22,8 +21,6 @@ function toStartAGame() {
 }
 
 function toRestartAGame() {
-    console.log('--- GAME RESTART ---');
-    document.getElementById("canvas").getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     document.getElementById("toWinAGame").style.display = "none";
     document.getElementById("toLoseAGame").style.display = "none";
     document.getElementById("restartButton").style.display = "none";
@@ -31,20 +28,15 @@ function toRestartAGame() {
         world.boss.reset();
     }
     keyboard.reset();
+    stopAllIntervals();
     world = null;
-    console.log(world);
     displayNoneStart();
     playBackgroundMusic();
     init();
-    
 }
 
 function stopAllIntervals() {
-    console.log('stopAllIntervals game.js');
-    let highestIntervalId = setInterval(() => { }, 1000);
-    for (let i = 0; i < highestIntervalId; i++) {
-        clearInterval(i);
-    }
+    clearAllTrackedTimers()
 }
 
 function displayNoneStart() {
@@ -54,7 +46,6 @@ function displayNoneStart() {
 }
 
 function init() {
-    console.log('init() called!');
     initLevel1();
     canvas = document.getElementById("canvas");
     world = new World(canvas, keyboard);
@@ -67,10 +58,12 @@ function playBackgroundMusic() {
 
 function viewControls() {
     document.getElementById("startScreen").style.display = "none";
+    document.getElementById("footer").style.display = "block";
 }
 
 function closeControls() {
     document.getElementById("startScreen").style.display = "flex";
+    document.getElementById("footer").style.display = "none";
 }
 
 function fullscreen() {
@@ -140,7 +133,6 @@ function play() {
     });
 }
 
-
 window.addEventListener("keydown", (e) => {
     if (e.keyCode == 39) {
         keyboard.RIGHT = true;
@@ -189,24 +181,29 @@ window.addEventListener("keyup", (e) => {
     }
 })
 
+function setTrackedInterval(fn, time, description = '') {
+    const id = setInterval(fn, time);
+    globalIntervals.push({ id, description });
+    // console.log(`[Interval gestartet] ID: ${id}, Beschreibung: ${description}`);
+    return id;
+}
 
+function setTrackedTimeout(fn, time, description = '') {
+    const id = setTimeout(fn, time);
+    globalTimeouts.push({ id, description });
+    // console.log(`[Timeout gestartet] ID: ${id}, Beschreibung: ${description}`);
+    return id;
+}
 
-// function setGlobalInterval(fn, time) {
-//     const id = setInterval(fn, time);
-//     intervalIds.push(id);
-//     return id;
-// }
-
-// function setGlobalTimeout(fn, time) {
-//     const id = setTimeout(fn, time);
-//     timeoutIds.push(id);
-//     return id;
-// }
-
-// function clearAllTimers() {
-//     intervalIds.forEach(clearInterval);
-//     timeoutIds.forEach(clearTimeout);
-//     intervalIds = [];
-//     timeoutIds = [];
-//     console.log('Alle Intervalle und Timeouts wurden gecleared.');
-// }
+function clearAllTrackedTimers() {
+    globalIntervals.forEach(timer => {
+        clearInterval(timer.id);
+        // console.log(`[Interval gestoppt] ID: ${timer.id}, Beschreibung: ${timer.description}`);
+    });
+    globalTimeouts.forEach(timer => {
+        clearTimeout(timer.id);
+        // console.log(`[Timeout gestoppt] ID: ${timer.id}, Beschreibung: ${timer.description}`);
+    });
+    globalIntervals.length = 0;
+    globalTimeouts.length = 0;
+}

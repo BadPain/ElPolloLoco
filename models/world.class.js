@@ -49,7 +49,7 @@ class World {
     }
 
     run() {
-        setInterval(() => {
+        setTrackedInterval(() => {
             this.checkCollisions();
             this.checkThrowObjects();
             this.checkCollectCoins();
@@ -60,10 +60,10 @@ class World {
             this.activeBoss();
             this.checkESC();
             this.checkBossAttack();
-        }, 10);
-        setInterval(() => {
+        }, 10, 'run()');
+        setTrackedInterval(() => {
             this.mainConsoleLog();
-        }, 500);
+        }, 500, 'mainConsoleLog()');
     }
 
     mainConsoleLog() {
@@ -76,6 +76,7 @@ class World {
         // console.log(this.character.isFallingDown(), 'isFallingDown');
         // console.log(world.isActive, 'isActive');
         // console.log(this.endboss.isActive, 'isActiveEndboss');
+        // console.log(globalIntervals.length, 'globalIntervals.length');
     }
 
     initFullscreenListener() {
@@ -138,12 +139,12 @@ class World {
         } else {
             chicken.loadImage(IMAGES_DEAD.normal);
         }
-        setTimeout(() => {
+        setTrackedTimeout(() => {
             let index = this.level.enemies.indexOf(chicken);
             if (index !== -1) {
                 this.level.enemies.splice(index, 1);
             }
-        }, 10000);
+        }, 10000, 'chicken die animation');
     }
 
     checkBottleCollisions() {
@@ -172,14 +173,12 @@ class World {
             }
             this.level.enemies.forEach(enemy => {
                 if (enemy instanceof Endboss && bottle.isColliding(enemy) && !bottle.hasHit) {
-                    // console.log(this.boss.energy, 'Bossenergy');
                     bottle.hasHit = true;
                     let isThrow = true;
                     this.boss.hit(bottle);
                     bottle.bottleSplash(isThrow);
                     this.bossBar.setPercentage(this.boss.energy);
                     this.isThrow = false;
-                    // console.log(this.boss.energy, 'Bossenergy');
                 }
             });
         }
@@ -289,11 +288,9 @@ class World {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
-
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.throwableObjects);
-
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.statusBar);
         this.drawLifeBarText();
@@ -303,22 +300,15 @@ class World {
         this.drawBottleBarText();
         this.toggleBossBar();
         this.ctx.translate(this.camera_x, 0);
-
         this.addToMap(this.character);
-
         let boss = this.level.enemies.find(e => e instanceof Endboss);
         if (boss) {
             this.addToMap(boss);
         }
         this.addObjectsToMap(this.level.enemies.filter(e => !(e instanceof Endboss)));
-
-        // this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.coins);
         this.addObjectsToMap(this.bottles);
-
         this.ctx.translate(-this.camera_x, 0);
-
-
         let self = this;
         requestAnimationFrame(function () {
             self.draw();
@@ -376,7 +366,6 @@ class World {
             this.toggleBossBarBegin = true;
             this.isBossActivated = true;
             this.boss.animate();
-            // console.log(this.isBossActivated, 'isBossActivated first time');
         }
     }
 
@@ -394,7 +383,6 @@ class World {
         mo.draw(this.ctx);
         mo.drawFrame(this.ctx);
         mo.drawFrameOffset(this.ctx)
-
         if (mo.otherDirection) {
             this.flipImageBack(mo);
         }
@@ -415,20 +403,10 @@ class World {
     toWinAGame() {
         document.getElementById("toWinAGame").style.display = "block";
         document.getElementById("restartButton").style.display = "block";
-        // console.log('You Win!');
     }
 
     toLoseAGame() {
         document.getElementById("toLoseAGame").style.display = "block";
         document.getElementById("restartButton").style.display = "block";
-        // console.log('You Lose!');
-    }
-
-    stopAllIntervals() {
-        let highestIntervalId = setInterval(() => { }, 1000);
-        for (let i = 0; i < highestIntervalId; i++) {
-            clearInterval(i);
-        }
-        console.log(`Alle Intervalle bis ID ${highestId} wurden gecleared.`);
     }
 }

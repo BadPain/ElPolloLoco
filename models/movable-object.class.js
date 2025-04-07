@@ -13,7 +13,7 @@ class MovableObject extends DrawableObject {
     };
 
     applyGravity() {
-        setInterval(() => {
+        setTrackedInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
@@ -21,7 +21,7 @@ class MovableObject extends DrawableObject {
             if (this.isOnGround()) {
                 this.speedY = 0;
             }
-        }, 1000 / 25);
+        }, 1000 / 25, 'gravity');
     }
 
     isFallingDown() {

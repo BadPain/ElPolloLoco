@@ -29,6 +29,7 @@
     <script src="models/endboss.class.js"></script>
     <script src="levels/level1.js"></script>
     <script src="js/game.js" defer></script>
+    <script src="js/swap-phone.js"></script>
 
     <audio id="music" src="audio/backgroundmusic.mp3" loop></audio>
 
@@ -55,6 +56,9 @@
         <canvas id="canvas" width="720" height="480">
             
         </canvas>
+        <div id="swapYourPhone" style="display: none;">
+            <img src="/img/swapYourPhone.gif" alt="Bitte drehen" />
+          </div>
         <div id="controls">
             <div id="hud">
                 <div class="panel">
@@ -69,7 +73,7 @@
                 </div>
             </div>
         </div>
-        <div class="footer">
+        <div id="footer" class="footer">
             <div class="footerInfo">
                 <button id="closeControls" onclick="closeControls()">CLOSE CONTROLS</button>
                 <p>Pfeiltasten: Bewegen den Charakter</p>

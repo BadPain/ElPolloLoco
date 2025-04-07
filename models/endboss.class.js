@@ -69,7 +69,6 @@ class Endboss extends MovableObject {
         this.speed = 20;
         this.isBossActivated = false;
         this.isDead = false;
-        // this.hasWon = false;
         this.bossIsWalking = false;
         this.alertPlayed = false;
         this.isAttacking = false;
@@ -94,15 +93,14 @@ class Endboss extends MovableObject {
     }
 
     animate() {
-        setInterval(() => {
+        setTrackedInterval(() => {
             this.handleMovementBoss();
             this.checkAttackTrigger();
-        }, 250);
-        setInterval(() => {
+        }, 250, 'Boss Movement');
+        setTrackedInterval(() => {
             this.handleAnimationBoss();
-        }, 250);
+        }, 250, 'Boss Animation');
         this.isBossActivated = true;
-        console.log(this.isBossActivated, 'isBossActivated');
     }
 
     handleMovementBoss() {
@@ -114,24 +112,14 @@ class Endboss extends MovableObject {
     }
 
     handleAnimationBoss() {
-        console.log(this.isDead, 'isDead', this.energy, 'energy', this.isAttacking, 'isAttacking', this.bossIsWalking, 'bossIsWalking', this.isBossActivated , 'isBossActivated', this.alertPlayed, 'alertPlayed');
-        
         if (this.isDead && this.energy == 0) {
             this.isDead = true;
-            console.log(this.isDead, 'isDead');
-            
             this.isAttacking = false;
             this.bossIsWalking = false;
-
-            // this.hasWon = true;
             this.playAnimation(this.IMAGES_DEAD);
-
-            setTimeout(() => {
-                console.log(world.toWinAGame, 'toWinAGame');
-                
+            setTrackedTimeout(() => {
                 world.toWinAGame();
-                world.stopAllIntervals();
-            }, 1000);
+            }, 1000, 'Boss Died!');
         } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
         } else if (this.isAttacking) {
@@ -141,63 +129,20 @@ class Endboss extends MovableObject {
             this.playAnimation(this.IMAGES_WALKING);
         } else if (this.isBossActivated && this.x - world.character.x < 500 && !this.bossIsWalking && !this.alertPlayed) {
             this.playAnimation(this.IMAGES_ALERT);
-            console.log('Boss is alert');
         }
     }
-
-    // handleAnimationBoss() {
-    //     if (this.isDead && this.energy == 0 && !this.hasWon) {
-    //         this.hasWon = true;
-    //         this.playAnimation(this.IMAGES_DEAD);
-    //         setTimeout(() => {
-    //             world.toWinAGame();
-    //             world.stopAllIntervals();
-    //         }, 3000);
-    //     } else if (this.isHurt()) {
-    //         this.playAnimation(this.IMAGES_HURT);
-    //     } else if (this.isBossActivated && Math.abs(this.x - world.character.x) < 150 && this.bossIsWalking) {
-    //         this.isAttacking = true;
-    //         this.bossIsWalking = false;
-    //         this.playAnimation(this.IMAGES_ATTACK);
-    //         console.log('Boss is attacking');
-
-    //         setTimeout(() => {
-    //             this.isAttacking = false;
-    //             this.bossIsWalking = true;
-    //             console.log('Boss finished attack');
-    //         }, 5000);
-
-    //         // setInterval(() => {
-    //         //     this.isAttacking = true;
-    //         //     this.bossIsWalking = false;
-    //         //     this.playAnimation(this.IMAGES_ATTACK);
-    //         //     console.log('Boss is attacking');
-    //         // }, 500);
-    //         // this.bossIsWalking = true;
-    //         // this.isAttacking = false;
-    //     } else if (this.isBossActivated && Math.abs(this.x - world.character.x) < 200 && !this.isAttacking) {
-    //         this.bossIsWalking = true;
-    //         console.log('Boss is walking');
-    //     } else if (this.isBossActivated && this.x - world.character.x < 500 && !this.bossIsWalking && !this.alertPlayed) {
-    //         this.playAnimation(this.IMAGES_ALERT);
-    //         console.log('Boss is alert');
-    //     }
-    // }
 
     checkAttackTrigger() {
         if (this.isBossActivated && (this.energy > 0) && !this.isAttacking && Math.abs(this.x - world.character.x) < 150) {
             this.isAttacking = true;
             this.bossIsWalking = false;
-            console.log('Boss is attacking');
-
-            setTimeout(() => {
+            setTrackedTimeout(() => {
                 if ((this.energy > 0)) {
                     this.isAttacking = false;
                     this.bossIsWalking = true;
                     world.checkBossAttacking = false;
-                    console.log('Boss finished attack');
                 }
-            }, 5000);
+            }, 5000, 'Boss finished attack');
         }
     }
 }
