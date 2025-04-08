@@ -20,7 +20,6 @@ class World {
     showBossBar = false;
     isActive = false;
 
-
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -35,8 +34,8 @@ class World {
         this.checkESC();
         this.addCoins();
         this.addBottles();
-        // this.addChickens();
-        // this.addSmallChickens();
+        this.addChickens();
+        this.addSmallChickens();
         this.coinBar.totalCoins = 5;
         this.bottleBar.totalBottles = 10;
         this.isBossActivated = false;

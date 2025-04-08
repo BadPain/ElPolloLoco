@@ -223,6 +223,32 @@ canvas {
         display: none !important;
     }
 
+    .panel {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    #panel-wrapper-left {
+        display: flex;
+        justify-content: left;
+        position: fixed;
+        top: 340px;
+        left: 80px;
+        width: 250px;
+        gap: 60px;
+    }
+
+    #panel-wrapper-right {
+        display: flex;
+        justify-content: right;
+        position: fixed;
+        top: 340px;
+        right: 80px;
+        width: 250px;
+        gap: 60px;
+    }
+
     #startScreen {
         position: relative;
         display: flex;

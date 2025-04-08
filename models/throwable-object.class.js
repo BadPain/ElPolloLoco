@@ -43,9 +43,6 @@ class ThrowableObject extends MovableObject {
             this.x += 5;
             this.y += this.speedY;
             this.speedY -= 2;
-            // this.x += 1;
-            // this.y -= -1;
-            // this.applyGravity();
         }, 25, 'ThrowInterval');
     }
 
@@ -77,5 +74,4 @@ class ThrowableObject extends MovableObject {
             world.throwableObjects.splice(world.throwableObjects.indexOf(bottleRemove), 1);
         });
     }
-
 }

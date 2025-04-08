@@ -4,7 +4,6 @@ let keyboard = new Keyboard();
 const globalIntervals = [];
 const globalTimeouts = [];
 
-
 window.backgroundMusic = new Audio('audio/backgroundmusic.mp3');
 window.backgroundMusic.volume = 0.0; // Testzwecke
 // window.backgroundMusic.volume = 0.1;
@@ -184,25 +183,21 @@ window.addEventListener("keyup", (e) => {
 function setTrackedInterval(fn, time, description = '') {
     const id = setInterval(fn, time);
     globalIntervals.push({ id, description });
-    // console.log(`[Interval gestartet] ID: ${id}, Beschreibung: ${description}`);
     return id;
 }
 
 function setTrackedTimeout(fn, time, description = '') {
     const id = setTimeout(fn, time);
     globalTimeouts.push({ id, description });
-    // console.log(`[Timeout gestartet] ID: ${id}, Beschreibung: ${description}`);
     return id;
 }
 
 function clearAllTrackedTimers() {
     globalIntervals.forEach(timer => {
         clearInterval(timer.id);
-        // console.log(`[Interval gestoppt] ID: ${timer.id}, Beschreibung: ${timer.description}`);
     });
     globalTimeouts.forEach(timer => {
         clearTimeout(timer.id);
-        // console.log(`[Timeout gestoppt] ID: ${timer.id}, Beschreibung: ${timer.description}`);
     });
     globalIntervals.length = 0;
     globalTimeouts.length = 0;

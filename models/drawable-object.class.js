@@ -1,9 +1,9 @@
 class DrawableObject {
-    x = 120;   // Wie weit!
-    y = 320;    // Wie hoch!
-    height = 150; // Höhe
-    width = 100; // Breite
-    img;       // Bild
+    x = 120;
+    y = 320;
+    height = 150;
+    width = 100;
+    img;
     imageCache = {};
     currentImage = 0;
 

@@ -101,6 +101,7 @@ class Character extends MovableObject {
     animate() {
         setTrackedInterval(() => this.handleMovement(), 1000 / 60, 'Pepe Movement');
         setTrackedInterval(() => this.handleAnimation(), 100, 'Pepe Animation');
+        setTrackedInterval(() => smartphoneControls(), 2500, 'Pepe Controls');
     }
 
     handleMovement() {

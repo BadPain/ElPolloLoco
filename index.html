@@ -29,13 +29,13 @@
     <script src="models/endboss.class.js"></script>
     <script src="levels/level1.js"></script>
     <script src="js/game.js" defer></script>
+    <script src="js/mobile-controls.js"></script>
     <script src="js/swap-phone.js"></script>
 
     <audio id="music" src="audio/backgroundmusic.mp3" loop></audio>
 
     <title>El pollo loco</title>
 </head>
-
 
 <body id="body">
     <div id="container" class="container">
@@ -54,21 +54,21 @@
             <button id="fullscreen" onclick="fullscreen()"></button>
         </div>
         <canvas id="canvas" width="720" height="480">
-            
+
         </canvas>
         <div id="swapYourPhone" style="display: none;">
             <img src="/img/swapYourPhone.gif" alt="Bitte drehen" />
-          </div>
+        </div>
         <div id="controls">
             <div id="hud">
-                <div class="panel">
-                    <div id="panel-wrapper">
-                        <button id="btnLeft" onclick="moveLeft()">&lt;</button>
-                        <button id="btnRight" onclick="moveRight()">&gt;</button>
+                <div id="panel" class="panel">
+                    <div id="panel-wrapper-left">
+                        <button id="btnLeft">&lt;</button>
+                        <button id="btnRight">&gt;</button>
                     </div>
-                    <div id="panel-wrapper">
-                        <button id="btnJump" onclick="jump()">&uarr;</button>
-                        <button id="btnThrow" onclick="throwObject()">&dagger;</button>
+                    <div id="panel-wrapper-right">
+                        <button id="btnJump">&uarr;</button>
+                        <button id="btnThrow">&dagger;</button>
                     </div>
                 </div>
             </div>
@@ -85,7 +85,6 @@
                             title="volumen Icons">Flaticon</a></p>
                 </div>
             </div>
-
         </div>
     </div>
 </body>

@@ -1,5 +1,4 @@
 class BottleBar extends DrawableObject {
-
     IMAGES = [
         'img/main/7_statusbars/1_statusbar/3_statusbar_bottle/blue/0.png',
         'img/main/7_statusbars/1_statusbar/3_statusbar_bottle/blue/20.png',
@@ -28,12 +27,10 @@ class BottleBar extends DrawableObject {
         this.totalBottles = totalBottles;
         this.percentage = (this.collectedBottles / this.totalBottles) * 100;
         let path = this.IMAGES[this.bottleBar()];
-        // console.log(path);
         this.img = this.imageCache[path];
     }
 
     bottleBar() {
-        // return Math.floor(this.percentage / 20);
         if (this.percentage == 0) {
             return 0;
         } else if (this.percentage <= 20) {

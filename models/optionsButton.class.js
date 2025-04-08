@@ -1,5 +1,4 @@
 class OptionsButtons extends DrawableObject {
-
     IMAGES_OPTION_SOUND = [
         'img/laut.png',
         'img/mute.png'
@@ -21,11 +20,8 @@ class OptionsButtons extends DrawableObject {
     }
 
     draw(ctx) {
-        // Draw the button
         ctx.fillStyle = 'rgb(255, 255, 255)';
         ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
-
-        // Add text to the button
         ctx.font = '24px Arial';
         ctx.fillStyle = 'rgb(0, 0, 0)';
         ctx.textAlign = 'center';
