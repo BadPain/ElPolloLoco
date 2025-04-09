@@ -111,6 +111,7 @@ class Endboss extends MovableObject {
             this.playAnimation(this.IMAGES_DEAD);
             setTrackedTimeout(() => {
                 world.toWinAGame();
+                gameIsRunning = false;
             }, 1000, 'Boss Died!');
         } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);

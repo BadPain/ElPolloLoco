@@ -71,23 +71,28 @@ class MovableObject extends DrawableObject {
     }
 
     playAnimation(images) {
-        (images.length > 0)
-        let i = this.currentImage % images.length;
-        let path = images[i];
-        this.img = this.imageCache[path];
-        this.currentImage++;
-        this.animationSpeed = 1;
+        if (!window.gameIsRunning) return;
+        if (images.length > 0) {
+            let i = this.currentImage % images.length;
+            let path = images[i];
+            this.img = this.imageCache[path];
+            this.currentImage++;
+            this.animationSpeed = 1;
+        }
     }
 
     moveRight() {
+        if (!window.gameIsRunning) return;
         this.x += this.speed;
     }
 
     moveLeft() {
+        if (!window.gameIsRunning) return;
         this.x -= this.speed;
     }
 
     jump() {
+        if (!window.gameIsRunning) return;
         this.currentImage = 0;
         this.speedY = 20;
     }

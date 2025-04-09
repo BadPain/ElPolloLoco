@@ -1,6 +1,7 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+gameIsRunning = true;
 const globalIntervals = [];
 const globalTimeouts = [];
 
@@ -28,6 +29,7 @@ function toRestartAGame() {
     }
     keyboard.reset();
     stopAllIntervals();
+    stopAllAnimations();
     world = null;
     displayNoneStart();
     playBackgroundMusic();
@@ -201,4 +203,8 @@ function clearAllTrackedTimers() {
     });
     globalIntervals.length = 0;
     globalTimeouts.length = 0;
+}
+
+function stopAllAnimations() {
+
 }

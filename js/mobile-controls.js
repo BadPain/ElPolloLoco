@@ -53,6 +53,6 @@ function smartphoneControls() {
         world.character.jump();
     }
     if (keyboard.D) {
-        world.character.throwObject();
+        world.character.checkThrowObjects();
     }
 }

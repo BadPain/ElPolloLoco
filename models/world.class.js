@@ -34,13 +34,17 @@ class World {
         this.checkESC();
         this.addCoins();
         this.addBottles();
-        this.addChickens();
-        this.addSmallChickens();
+        // this.addChickens();
+        // this.addSmallChickens();
         this.coinBar.totalCoins = 5;
         this.bottleBar.totalBottles = 10;
         this.isBossActivated = false;
         this.toggleBossBarBegin = false;
         this.checkBossAttacking = false;
+    }
+
+    get percentage() {
+        return Math.min(this.playerInventory.length * 20, 100);
     }
 
     setWorld() {
@@ -273,14 +277,17 @@ class World {
             this.bottles.splice(index, 1);
             this.bottleBar.setPercentage(10 - this.bottles.length, 10);
             this.playerInventory.push('bottle');
+            this.bottleBar.setPercentage(this.playerInventory.length, 10);
         }
     }
 
     checkThrowObjects() {
+        if (!window.gameIsRunning) return;
         if (this.keyboard.D && this.playerInventory.length > 0 && this.throwableObjects.length < 1) {
             let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
             this.throwableObjects.push(bottle);
             this.playerInventory.pop();
+            this.bottleBar.setPercentage(this.playerInventory.length, 10);
         }
     }
 
@@ -388,6 +395,7 @@ class World {
     }
 
     flipImage(mo) {
+        if (!window.gameIsRunning) return;
         this.ctx.save();
         this.ctx.translate(mo.width, 0);
         this.ctx.scale(-1, 1);
@@ -395,6 +403,7 @@ class World {
     }
 
     flipImageBack(mo) {
+        if (!window.gameIsRunning) return;
         this.ctx.restore();
         mo.x = mo.x * -1;
     }
@@ -402,6 +411,7 @@ class World {
     toWinAGame() {
         document.getElementById("toWinAGame").style.display = "block";
         document.getElementById("restartButton").style.display = "block";
+        stopAllAnimations();
     }
 
     toLoseAGame() {

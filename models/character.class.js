@@ -95,7 +95,7 @@ class Character extends MovableObject {
         this.animate();
         this.isFallingDown();
         this.idleTime = 0;
-        this.energy = 100000;
+        this.energy = 100;
     }
 
     animate() {
