@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/world.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/world.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>class World {
+    character;
+    level;
+    canvas;
+    ctx;
+    keyboard;
+    camera_x = 0;
+    statusBar = new StatusBar();
+    throwableObjects = [];
+    coinBar = new CoinBar();
+    bottleBar = new BottleBar();
+    bossBar = new BossBar();
+    coins = [];
+    bottles = [];
+    collectedCoin = 0;
+    totalCoins = 5;
+    collectedBottles = 0;
+    totalBottles = 10;
+    playerInventory = [];
+    showBossBar = false;
+    isActive = false;
+
+
+    /**
+     * Creates an instance of the World class.
+     * 
+     * @param {HTMLCanvasElement} canvas - The canvas element used to render the game.
+     * @param {Keyboard} keyboard - The keyboard instance to handle player inputs.
+     * 
+     * Initializes various game components such as the character, level, and status bars.
+     * Sets up the game environment, including fullscreen listener and drawing context.
+     * Adds entities like coins, bottles, chickens, and small chickens to the game.
+     * Prepares the boss and related mechanics, including boss bar and attack checks.
+     */
+    constructor(canvas, keyboard) {
+        this.ctx = canvas.getContext('2d');
+        this.canvas = canvas;
+        this.keyboard = keyboard;
+        this.character = new Character();
+        this.level = level1;
+        this.boss = this.level.enemies.find(enemy => enemy instanceof Endboss);
+        this.initFullscreenListener();
+        this.draw();
+        this.setWorld();
+        this.run();
+        this.checkESC();
+        this.addCoins();
+        this.addBottles();
+        this.addChickens();
+        this.addSmallChickens();
+        this.coinBar.totalCoins = 5;
+        this.bottleBar.totalBottles = 10;
+        this.isBossActivated = false;
+        this.toggleBossBarBegin = false;
+        this.checkBossAttacking = false;
+    }
+
+    /**
+     * Calculates the percentage value based on the number of items in the player's inventory.
+     * Each item contributes 20% to the total percentage, capping at 100%.
+     * 
+     * @returns {number} The calculated percentage, with a maximum value of 100.
+     */
+    get percentage() {
+        return Math.min(this.playerInventory.length * 20, 100);
+    }
+
+    /**
+     * Sets the world of the character to the current instance of World.
+     * This is necessary for the character to access the world's properties and methods.
+     */
+    setWorld() {
+        this.character.world = this;
+    }
+
+    /**
+     * The main game loop. This function is called every 10ms and is responsible for
+     * running the game logic, including collision detection, player movement,
+     * collecting coins and bottles, and boss activation.
+     */
+    run() {
+        setTrackedInterval(() => {
+            this.checkCollisions();
+            this.checkThrowObjects();
+            this.checkCollectCoins();
+            this.checkCollectBottles();
+            this.checkChickenCollisionsUp();
+            this.checkBottleCollisions();
+            this.removeNotCollisionBottle();
+            this.activeBoss();
+            this.checkESC();
+            this.checkBossAttack();
+        }, 10, 'run()');
+    }
+
+    /**
+     * Initializes a listener for changes in fullscreen mode.
+     * This listener updates the background image of the fullscreen button
+     * to indicate whether the application is in fullscreen mode or not.
+     * When entering fullscreen, the icon changes to a minimize icon,
+     * and when exiting fullscreen, it changes to a fullscreen icon.
+     * @function initFullscreenListener
+     * @since 0.1.0
+     */
+    initFullscreenListener() {
+        document.addEventListener("fullscreenchange", () => {
+            const fullscreenIcon = document.getElementById("fullscreen");
+            if (document.fullscreenElement) {
+                fullscreenIcon.style.backgroundImage = "url('img/minimieren.png')";
+            } else {
+                fullscreenIcon.style.backgroundImage = "url('img/vollbild.png')";
+            }
+        });
+    }
+
+    /**
+     * Checks if the ESC key is pressed and if the game is in fullscreen mode.
+     * If both conditions are true, the game exits fullscreen mode.
+     */
+    checkESC() {
+        if (this.keyboard.ESCAPE &amp;&amp; document.fullscreenElement) {
+            document.exitFullscreen();
+        }
+    }
+
+    /**
+     * Checks if the player has collided with any enemies.
+     * If there is a collision, the player's energy is decreased and the status bar is updated.
+     * This method is called every 10 milliseconds.
+     */
+    checkCollisions() {
+        this.level.enemies.forEach(enemies => {
+            if (this.character.isColliding(enemies) &amp;&amp; this.character.isOnGround() &amp;&amp; !this.character.isFallingDown() &amp;&amp; !enemies.isDead) {
+                this.character.hit(enemies);
+                this.statusBar.setPercentage(this.character.energy);
+            }
+        });
+    }
+
+    /**
+     * Checks for collisions between the character and chickens while the character is moving upward.
+     * If a collision is detected with a chicken and the character is above ground and moving upward,
+     * the chicken is marked for a death animation.
+     * This function does not affect the Endboss character.
+     */
+    checkChickenCollisionsUp() {
+        this.level.enemies.forEach(chicken => {
+            if (this.character.isColliding(chicken)) {
+                if (chicken instanceof Endboss) {
+                    return;
+                } else if (this.character.isAboveGround() &amp;&amp; this.character.speedY &lt; 0) {
+                    this.chicken = chicken;
+                    this.dieAnimation(this.chicken);
+                }
+            }
+        });
+    }
+
+    /**
+     * Checks if the character is within a certain distance from the Endboss
+     * and if the Endboss is currently attacking.
+     * If both conditions are true, the character is hit and its energy is decreased.
+     * A flag is set to prevent the character from being hit multiple times during
+     * one Endboss attack animation.
+     */
+    checkBossAttack() {
+        if (this.boss.isAttacking &amp;&amp; Math.abs(this.boss.x - world.character.x) &lt; 149 &amp;&amp; !this.checkBossAttacking) {
+            this.checkBossAttacking = true;
+            this.character.hit(this.boss);
+            this.statusBar.setPercentage(this.character.energy);
+        }
+    }
+
+    /**
+     * Triggers the death animation for a chicken object.
+     * Marks the chicken as dead, stops its movement and walking intervals, 
+     * and changes its image to the dead state.
+     * After 10 seconds, it removes the chicken from the list of enemies.
+     *
+     * @param {Chicken|SmallChicken} chicken - The chicken object that will die.
+     */
+    dieAnimation(chicken) {
+        let IMAGES_DEAD = {
+            normal: 'img/main/3_enemies_chicken/chicken_normal/2_dead/dead.png',
+            small: 'img/main/3_enemies_chicken/chicken_small/2_dead/dead.png'
+        };
+        chicken.isDead = true;
+        clearInterval(chicken.moveInterval);
+        clearInterval(chicken.walkInterval);
+        if (chicken instanceof SmallChicken) {
+            chicken.loadImage(IMAGES_DEAD.small);
+        } else {
+            chicken.loadImage(IMAGES_DEAD.normal);
+        }
+        setTrackedTimeout(() => {
+            let index = this.level.enemies.indexOf(chicken);
+            if (index !== -1) {
+                this.level.enemies.splice(index, 1);
+            }
+        }, 10000, 'chicken die animation');
+    }
+
+    /**
+     * Checks for collisions between throwable objects and enemies in the level.
+     * If a bottle collides with an enemy that is not an Endboss, the chicken's
+     * death animation is triggered, and the bottle performs a splash animation.
+     * If the enemy is an Endboss, the collision is checked separately using
+     * the checkBottleCollisionBoss method.
+     * This method assumes there is at least one throwable object in the array
+     * when performing the collision check.
+     */
+    checkBottleCollisions() {
+        this.level.enemies.forEach(chicken => {
+            if (this.throwableObjects.length > 0) {
+                if ((chicken instanceof Endboss)) {
+                    this.checkBottleCollisionBoss();
+                } else if (this.throwableObjects[0].isColliding(chicken)) {
+                    let isThrow = true;
+                    this.chicken = chicken;
+                    this.dieAnimation(this.chicken);
+                    this.throwableObjects[0].bottleSplash(isThrow);
+                    this.isThrow = false;
+                }
+            }
+        });
+    }
+
+    /**
+     * Checks for collisions between throwable objects and the Endboss.
+     * If a bottle collides with the Endboss and the Endboss is not dead, the
+     * Endboss is hit, the bottle performs a splash animation, and the boss's
+     * health bar is updated. If the boss's energy is zero or less, the boss is
+     * marked as dead and a message is logged. This method assumes there is at least 
+     * one throwable object in the array when performing the collision check.
+     * 
+     * This function prevents multiple hits from the same bottle by checking
+     * if the bottle has already hit the boss.
+     */
+    checkBottleCollisionBoss() {
+        if (this.throwableObjects.length > 0) {
+            let bottle = this.throwableObjects[0];
+            if (this.boss.energy &lt;= 0) {
+                this.boss.isDead = true;
+                console.log('Boss ist tot!');
+                return;
+            }
+            this.level.enemies.forEach(enemy => {
+                if (enemy instanceof Endboss &amp;&amp; bottle.isColliding(enemy) &amp;&amp; !bottle.hasHit) {
+                    bottle.hasHit = true;
+                    let isThrow = true;
+                    this.boss.hit(bottle);
+                    bottle.bottleSplash(isThrow);
+                    this.bossBar.setPercentage(this.boss.energy);
+                    this.isThrow = false;
+                }
+            });
+        }
+    }
+
+    /**
+     * Removes a bottle from the game if it has not hit a chicken and its y-coordinate
+     * is greater than 400, indicating that the bottle has fallen to the ground.
+     * This method is called every 10 milliseconds and is part of the main game loop.
+     * If the bottle has collided with a chicken, the bottle is not removed and the
+     * chicken is marked for a death animation.
+     */
+    removeNotCollisionBottle() {
+        if (this.throwableObjects.length > 0) {
+            if (this.throwableObjects[0].y > 400 &amp;&amp; !this.isCollidingWithChicken) {
+                this.removeObjectFromGame();
+            } else {
+                return;
+            }
+        }
+    }
+
+    /**
+     * Removes a bottle from the game by splicing it out of the array of bottles.
+     * This method is called when a bottle has hit a chicken or fallen to the
+     * ground and is no longer needed in the game.
+     */
+    removeObjectFromGame() {
+        this.throwableObjects.forEach(bottleRemove => {
+            this.throwableObjects.splice(this.throwableObjects.indexOf(bottleRemove), 1);
+        });
+    }
+
+    /**
+     * Adds five coins to the game at random positions within the game's
+     * boundaries. The coins are added to the array of coins.
+     */
+    addCoins() {
+        for (let i = 0; i &lt; 5; i++) {
+            let x = -500 + Math.random() * 2500;
+            let y = 200 + Math.random() * 100;
+            let coin = new Coin();
+            coin.x = x;
+            coin.y = y;
+            this.coins.push(coin);
+        }
+    }
+
+    /**
+     * Adds ten bottles to the game at random positions within the game's
+     * boundaries. The bottles are added to the array of bottles.
+     */
+    addBottles() {
+        for (let i = 0; i &lt; 10; i++) {
+            let x = -500 + Math.random() * 2500;
+            let y = 200 + Math.random() * 100;
+            let bottle = new Bottles();
+            bottle.x = x;
+            bottle.y = y;
+            this.bottles.push(bottle);
+        }
+    }
+
+    /**
+     * Adds ten chickens to the game at random positions within the specified boundaries.
+     * The chickens are instantiated and their positions are set randomly between
+     * the minLeftBoundary and maxRightBoundary. Each chicken is then added to the
+     * level's enemies array.
+     */
+    addChickens() {
+        for (let i = 0; i &lt; 10; i++) {
+            let minLeftBoundary = 1750;
+            let maxRightBoundary = 3500;
+            let x = minLeftBoundary + Math.random() * (maxRightBoundary - minLeftBoundary);
+            let chicken = new Chicken();
+            chicken.x = x;
+            this.level.enemies.push(chicken);
+        }
+    }
+
+    /**
+     * Adds ten small chickens to the game at random positions within the specified boundaries.
+     * The small chickens are instantiated and their positions are set randomly between
+     * the minLeftBoundary and maxRightBoundary. Each small chicken is then added to the
+     * level's enemies array.
+     */
+    addSmallChickens() {
+        for (let i = 0; i &lt; 10; i++) {
+            let minLeftBoundary = 1750;
+            let maxRightBoundary = 3500;
+            let x = minLeftBoundary + Math.random() * (maxRightBoundary - minLeftBoundary);
+            let smallChicken = new SmallChicken();
+            smallChicken.x = x;
+            this.level.enemies.push(smallChicken);
+        }
+    }
+
+    /**
+     * Checks if the player has collided with any coins on the game board and
+     * if so, calls the collectCoin() method to remove the coin from the game
+     * and update the coin bar. This method is called every 10 milliseconds and
+     * is part of the main game loop.
+     */
+    checkCollectCoins() {
+        this.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                this.collectCoin(coin);
+            }
+        });
+    }
+
+    /**
+     * Checks if the player has collided with any bottles on the game board and
+     * if so, calls the collectBottle() method to remove the bottle from the game
+     * and update the bottle bar. This method is called every 10 milliseconds and
+     * is part of the main game loop.
+     */
+    checkCollectBottles() {
+        this.bottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle)) {
+                this.collectBottle(bottle);
+            }
+        });
+    }
+
+    /**
+     * Removes a coin from the game when the player has collected it by calling
+     * the setPercentage() method to update the coin bar. This method is called
+     * by the checkCollectCoins() method when a collision between the player and
+     * a coin is detected.
+     * @param {Coin} coin The coin that has been collected.
+     */
+    collectCoin(coin) {
+        let index = this.coins.indexOf(coin);
+        if (index > -1) {
+            this.coins.splice(index, 1);
+            this.coinBar.setPercentage(5 - this.coins.length, 5);
+        }
+    }
+
+    /**
+     * Removes a bottle from the game when the player has collected it by updating
+     * the bottle bar and adding the bottle to the player's inventory. This method
+     * is called by the checkCollectBottles() method when a collision between the
+     * player and a bottle is detected.
+     * @param {Bottle} bottle The bottle that has been collected.
+     */
+    collectBottle(bottle) {
+        let index = this.bottles.indexOf(bottle);
+        if (index > -1) {
+            this.bottles.splice(index, 1);
+            this.bottleBar.setPercentage(10 - this.bottles.length, 10);
+            this.playerInventory.push('bottle');
+            this.bottleBar.setPercentage(this.playerInventory.length, 10);
+        }
+    }
+
+    /**
+     * Checks if the player has pressed the 'D' key and if so, throws a bottle
+     * by creating a new ThrowableObject and adding it to the array of
+     * throwable objects. The player's inventory is also updated by removing
+     * one bottle from the array. This method is called every 10 milliseconds and
+     * is part of the main game loop.
+     */
+    checkThrowObjects() {
+        if (!window.gameIsRunning) return;
+        if (this.keyboard.D &amp;&amp; this.playerInventory.length > 0 &amp;&amp; this.throwableObjects.length &lt; 1) {
+            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50);
+            this.throwableObjects.push(bottle);
+            this.playerInventory.pop();
+            this.bottleBar.setPercentage(this.playerInventory.length, 10);
+        }
+    }
+
+    /**
+     * Draws the game map, all objects and bars on the canvas. This method is
+     * called every frame and is part of the main game loop. It translates the
+     * context to the camera position, adds all objects and bars to the map and
+     * then translates the context back to the initial position. This method is
+     * called recursively by calling requestAnimationFrame() at the end of the
+     * method.
+     */
+    draw() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.backgroundObjects);
+        this.addObjectsToMap(this.level.clouds);
+        this.addObjectsToMap(this.throwableObjects);
+        this.ctx.translate(-this.camera_x, 0);
+        this.addToMap(this.statusBar);
+        this.drawLifeBarText();
+        this.addToMap(this.coinBar);
+        this.drawCoinBarText();
+        this.addToMap(this.bottleBar);
+        this.drawBottleBarText();
+        this.toggleBossBar();
+        this.ctx.translate(this.camera_x, 0);
+        this.addToMap(this.character);
+        let boss = this.level.enemies.find(e => e instanceof Endboss);
+        if (boss) {
+            this.addToMap(boss);
+        }
+        this.addObjectsToMap(this.level.enemies.filter(e => !(e instanceof Endboss)));
+        this.addObjectsToMap(this.coins);
+        this.addObjectsToMap(this.bottles);
+        this.ctx.translate(-this.camera_x, 0);
+        let self = this;
+        requestAnimationFrame(function () {
+            self.draw();
+        });
+    }
+
+    /**
+     * Adds an array of objects to the game map by calling the addToMap() method
+     * for each object in the array.
+     * @param {Array.&lt;DrawableObject>} objects The array of objects to add to the
+     * map.
+     */
+    addObjectsToMap(objects) {
+        objects.forEach(object => {
+            this.addToMap(object);
+        });
+    }
+
+    /**
+     * Draws the character's current energy value as text on the life bar.
+     */
+    drawLifeBarText() {
+        this.ctx.font = '12px Arial';
+        this.ctx.fillStyle = 'black';
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'top';
+        this.ctx.fillText(`${this.character.energy}`, 200, 50);
+    }
+
+    /**
+     * Draws the number of collected coins as text on the coin bar.
+     * The text is only drawn if the coin bar is defined and has a total number of coins.
+     * The text is drawn in black color, with '12px Arial' font, left aligned and with top
+     * baseline. The text is drawn at position (200, 100) on the canvas.
+     */
+    drawCoinBarText() {
+        if (this.coinBar &amp;&amp; this.coinBar.totalCoins) {
+            this.ctx.font = '12px Arial';
+            this.ctx.fillStyle = 'black';
+            this.ctx.textAlign = 'left';
+            this.ctx.textBaseline = 'top';
+            this.ctx.fillText(`${this.coinBar.collectedCoins || 0} / ${this.coinBar.totalCoins}`, 200, 100);
+        }
+    }
+
+    /**
+     * Draws the number of collected bottles as text on the bottle bar.
+     * The text is only drawn if the bottle bar is defined and has a total number of bottles.
+     * The text is drawn in black color, with '12px Arial' font, left aligned and with top
+     * baseline. The text is drawn at position (200, 150) on the canvas.
+     */
+    drawBottleBarText() {
+        if (this.bottleBar &amp;&amp; this.bottleBar.totalBottles) {
+            this.ctx.font = '12px Arial';
+            this.ctx.fillStyle = 'black';
+            this.ctx.textAlign = 'left';
+            this.ctx.textBaseline = 'top';
+            this.ctx.fillText(`${this.playerInventory.length} / ${this.bottleBar.totalBottles}`, 200, 150);
+        }
+    }
+
+    /**
+     * Draws the text 'Bosslife' on the boss bar.
+     * The text is only drawn if the character's x position is greater than 1500.
+     * The text is drawn in black color, with '12px Arial' font, left aligned and with top
+     * baseline. The text is drawn at position (x, 43) on the canvas, where x is the right
+     * edge of the canvas minus the width of the text 'nomnom' plus 55.
+     */
+    drawBossBarText() {
+        if (this.character.x > 1500) {
+            this.ctx.font = '12px Arial';
+            this.ctx.fillStyle = 'black';
+            this.ctx.textAlign = 'left';
+            this.ctx.textBaseline = 'top';
+            let textWidth = this.ctx.measureText('nomnom').width;
+            let x = 720 - textWidth - 55;
+            this.ctx.fillText('Bosslife', x, 43);
+        }
+    }
+
+    /**
+     * Activates the boss if the character is close enough to the boss. This
+     * method is called every frame and is part of the main game loop. It
+     * checks if the character is within 700 pixels of the boss and if the
+     * boss is not already activated. If these conditions are met, it sets
+     * the boss to be activated and starts the boss's animation.
+     */
+    activeBoss() {
+        if (!this.isBossActivated &amp;&amp; Math.abs(this.boss.x - world.character.x) &lt; 700) {
+            this.toggleBossBarBegin = true;
+            this.isBossActivated = true;
+            this.boss.animate();
+        }
+    }
+
+    /**
+     * Toggles the visibility of the boss bar on the game map.
+     * This method checks if the boss bar should be displayed by 
+     * evaluating the toggleBossBarBegin flag. If true, it adds 
+     * the boss bar to the map and draws its associated text.
+     */
+    toggleBossBar() {
+        if (this.toggleBossBarBegin == true) {
+            this.addToMap(this.bossBar);
+            this.drawBossBarText();
+        }
+    }
+
+    /**
+     * Adds a MovableObject to the game map.
+     * @param {MovableObject} mo The object to add to the map.
+     * @description
+     * This method first checks if the object is facing the other direction. If so, it flips the object
+     * horizontally and reverses its x position. Then it calls the object's draw, drawFrame and drawFrameOffset
+     * methods. If the object was flipped, it flips it back and reverses its x position again.
+     */
+    addToMap(mo) {
+        if (mo.otherDirection) {
+            this.flipImage(mo);
+        }
+        mo.draw(this.ctx);
+        mo.drawFrame(this.ctx);
+        mo.drawFrameOffset(this.ctx)
+        if (mo.otherDirection) {
+            this.flipImageBack(mo);
+        }
+    }
+
+    /**
+     * Flips a MovableObject horizontally and reverses its x position.
+     * @param {MovableObject} mo The object to flip.
+     * @description
+     * This method is used to make objects face the other direction. It first saves
+     * the current state of the canvas, translates the object to its width position,
+     * scales the object by -1 horizontally and then reverses the object's x position.
+     * This is necessary because the object's x position is relative to its
+     * top-left corner and not its center.
+     */
+    flipImage(mo) {
+        if (!window.gameIsRunning) return;
+        this.ctx.save();
+        this.ctx.translate(mo.width, 0);
+        this.ctx.scale(-1, 1);
+        mo.x = mo.x * -1;
+    }
+
+    /**
+     * Reverses the effects of flipImage on a MovableObject.
+     * @param {MovableObject} mo The object to reverse the effects of flipImage on.
+     * @description
+     * This method is used to reverse the effects of flipImage. It first restores the
+     * canvas state, then reverses the object's x position to its original value.
+     */
+    flipImageBack(mo) {
+        if (!window.gameIsRunning) return;
+        this.ctx.restore();
+        mo.x = mo.x * -1;
+    }
+
+    /**
+     * Displays the win screen and restart button, and stops all animations.
+     * @function toWinAGame
+     * @since 0.1.0
+     */
+    toWinAGame() {
+        document.getElementById("toWinAGame").style.display = "block";
+        document.getElementById("restartButton").style.display = "block";
+        stopAllAnimations();
+    }
+
+    /**
+     * Displays the lose screen and restart button.
+     * @function toLoseAGame
+     * @since 0.1.0
+     */
+    toLoseAGame() {
+        document.getElementById("toLoseAGame").style.display = "block";
+        document.getElementById("restartButton").style.display = "block";
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BottleBar.html">BottleBar</a></li><li><a href="Bottles.html">Bottles</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="CoinBar.html">CoinBar</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="Level.html">Level</a></li><li><a href="OptionsButtons.html">OptionsButtons</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBar.html">StatusBar</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li><li><a href="backgroundObject.html">backgroundObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#bindBtsPressEvents">bindBtsPressEvents</a></li><li><a href="global.html#checkOrientation">checkOrientation</a></li><li><a href="global.html#clearAllTrackedTimers">clearAllTrackedTimers</a></li><li><a href="global.html#closeControls">closeControls</a></li><li><a href="global.html#displayNoneStart">displayNoneStart</a></li><li><a href="global.html#enterFullscreen">enterFullscreen</a></li><li><a href="global.html#exitFullscreen">exitFullscreen</a></li><li><a href="global.html#fullscreen">fullscreen</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initFullscreenListener">initFullscreenListener</a></li><li><a href="global.html#initLevel1">initLevel1</a></li><li><a href="global.html#mute">mute</a></li><li><a href="global.html#play">play</a></li><li><a href="global.html#playBackgroundMusic">playBackgroundMusic</a></li><li><a href="global.html#setTrackedInterval">setTrackedInterval</a></li><li><a href="global.html#setTrackedTimeout">setTrackedTimeout</a></li><li><a href="global.html#stopAllIntervals">stopAllIntervals</a></li><li><a href="global.html#toLoseAGame">toLoseAGame</a></li><li><a href="global.html#toRestartAGame">toRestartAGame</a></li><li><a href="global.html#toStartAGame">toStartAGame</a></li><li><a href="global.html#toWinAGame">toWinAGame</a></li><li><a href="global.html#toggleMusic">toggleMusic</a></li><li><a href="global.html#viewControls">viewControls</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Apr 09 2025 14:33:35 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

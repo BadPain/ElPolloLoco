@@ -22,6 +22,11 @@ class ThrowableObject extends MovableObject {
         'img/main/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
     ];
 
+    /**
+     * Constructor for the ThrowableObject class.
+     * @param {number} x - The x-coordinate of the object.
+     * @param {number} y - The y-coordinate of the object.
+     */
     constructor(x, y) {
         super().loadImage('img/main/6_salsa_bottle/salsa_bottle.png');
         this.loadImages(this.IMAGES_BOTTLE);
@@ -35,6 +40,11 @@ class ThrowableObject extends MovableObject {
         this.bottleThrow();
     }
 
+    /**
+     * Throws the bottle by setting the vertical speed to -10 and setting the interval to apply gravity.
+     * Also sets the interval to move the bottle to the right and down every 25 milliseconds.
+     * The bottle is set to be thrown by setting the isThrown property to true.
+     */
     throw() {
         this.isThrown = true;
         this.speedY = -10;
@@ -46,6 +56,11 @@ class ThrowableObject extends MovableObject {
         }, 25, 'ThrowInterval');
     }
 
+    /**
+     * Plays the bottle throw animation by setting an interval to play the images in the IMAGES_BOTTLE array.
+     * The interval is set to 50 milliseconds and is labeled as 'bottleThrowInterval'.
+     * The bottle is set to be thrown by setting the isThrown property to true.
+     */
     bottleThrow() {
         if (this.isThrown = true) {
             setTrackedInterval(() => {
@@ -54,6 +69,12 @@ class ThrowableObject extends MovableObject {
         }
     }
 
+    /**
+     * Plays the bottle splash animation and removes the bottle from the game.
+     * If isThrow is true, the animation is played and the bottle is removed after 250 milliseconds.
+     * If isThrow is false, the bottle is removed if it is below the ground.
+     * @param {boolean} isThrow - Whether the bottle was thrown or not.
+     */
     bottleSplash(isThrow) {
         if (isThrow) {
             setTrackedInterval(() => {
@@ -69,6 +90,10 @@ class ThrowableObject extends MovableObject {
         }
     }
 
+    /**
+     * Removes the bottle from the game by splicing it out of the array of throwable objects.
+     * This method is called when the bottle has hit a chicken or fallen to the ground and is no longer needed in the game.
+     */
     removeObjectFromGame() {
         world.throwableObjects.forEach(bottleRemove => {
             world.throwableObjects.splice(world.throwableObjects.indexOf(bottleRemove), 1);

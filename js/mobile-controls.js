@@ -2,6 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     bindBtsPressEvents();
   });
 
+/**
+ * Binds touchstart and touchend events to the mobile controls buttons.
+ * The associated keyboard values are set to true on touchstart and false on touchend.
+ * This allows the mobile controls to work the same way as the keyboard controls.
+ * @function
+ */
 function bindBtsPressEvents(){
     const btnLeft = document.getElementById('btnLeft');
     const btnRight = document.getElementById('btnRight');
@@ -42,6 +48,13 @@ function bindBtsPressEvents(){
     });
 }
 
+/**
+ * Handles player movement and jumping on smartphones.
+ * This function is called in the requestAnimationFrame loop.
+ * @function smartphoneControls
+ * @since 0.1.0
+ * @private
+ */
 function smartphoneControls() {
     if (keyboard.RIGHT) {
         world.character.moveRight();

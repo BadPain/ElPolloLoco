@@ -77,6 +77,13 @@ class Character extends MovableObject {
 
     world;
 
+    /**
+     * Constructor for Character class.
+     * Initializes the character with the specified sprites and assigns its world.
+     * Sets the initial values for the character's position, speed, width, height, and energy.
+     * Applies gravity to the character and loads its walking and jumping sounds.
+     * Calls the animate function to start animating the character and sets the idle time to 0.
+     */
     constructor() {
         super().loadImage('img/main/2_character_pepe/2_walk/W-21.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -88,22 +95,37 @@ class Character extends MovableObject {
         this.applyGravity();
         this.walking_sound = new Audio('audio/walk_new3.mp3');
         this.jumping_sound = new Audio('audio/jipii3.mp3');
-        this.walking_sound.volume = 0.0; // Testzwecke
-        this.jumping_sound.volume = 0.0; // Testzwecke
-        // this.walking_sound.volume = 0.3;
-        // this.jumping_sound.volume = 0.1;
+        this.walking_sound.volume = 0.3;
+        this.jumping_sound.volume = 0.1;
         this.animate();
         this.isFallingDown();
         this.idleTime = 0;
         this.energy = 100;
     }
 
+    /**
+     * Initiates the animation intervals for the character.
+     * The character moves left and right at specified intervals and plays walking animations,
+     * unless the character is dead or has moved beyond the left boundary.
+     * The character also plays jumping animations when jumping.
+     * The smartphone controls are updated every 2.5 seconds.
+     */
     animate() {
         setTrackedInterval(() => this.handleMovement(), 1000 / 60, 'Pepe Movement');
         setTrackedInterval(() => this.handleAnimation(), 100, 'Pepe Animation');
         setTrackedInterval(() => smartphoneControls(), 2500, 'Pepe Controls');
     }
 
+    /**
+     * Handles the character's movement based on keyboard input.
+     * 
+     * Pauses and resumes the walking sound based on movement direction.
+     * Moves the character right or left if the corresponding keys are pressed,
+     * ensuring the character stays within the game boundaries.
+     * Initiates a jump if the spacebar is pressed and the character is on the ground,
+     * playing the jumping sound.
+     * Adjusts the camera position relative to the character's x-coordinate.
+     */
     handleMovement() {
         this.walking_sound.pause();
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
@@ -123,6 +145,17 @@ class Character extends MovableObject {
         this.world.camera_x = -this.x + 100;
     }
 
+    /**
+     * Handles the character's animations based on its state and keyboard input.
+     * 
+     * If the character is dead, plays the death animation and triggers the game over screen.
+     * If the character is hurt, plays the hurt animation.
+     * If the character is jumping, plays the jumping animation.
+     * If the character is walking, plays the walking animation.
+     * If the character is idle, plays the idle animation or the long idle animation after 10 seconds.
+     * 
+     * @returns {void} No return value
+     */
     handleAnimation() {
         if (this.hasLose) return;
 

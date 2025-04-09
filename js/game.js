@@ -6,10 +6,14 @@ const globalIntervals = [];
 const globalTimeouts = [];
 
 window.backgroundMusic = new Audio('audio/backgroundmusic.mp3');
-window.backgroundMusic.volume = 0.0; // Testzwecke
-// window.backgroundMusic.volume = 0.1;
+window.backgroundMusic.volume = 0.1;
 window.backgroundMusic.loop = true;
 
+/**
+ * Hides the start screen and shows the game area.
+ * @function toStartAGame
+ * @since 0.1.0
+ */
 function toStartAGame() {
     document.getElementById("canvas").style.display = "block";
     document.getElementById("closeControls").style.display = "none";
@@ -20,6 +24,11 @@ function toStartAGame() {
     init();
 }
 
+/**
+ * Resets the game to its initial state and restarts the game.
+ * @function toRestartAGame
+ * @since 0.1.0
+ */
 function toRestartAGame() {
     document.getElementById("toWinAGame").style.display = "none";
     document.getElementById("toLoseAGame").style.display = "none";
@@ -36,16 +45,31 @@ function toRestartAGame() {
     init();
 }
 
+/**
+ * Clears all tracked intervals and timeouts.
+ * @function stopAllIntervals
+ * @since 0.1.0
+ */
 function stopAllIntervals() {
     clearAllTrackedTimers()
 }
 
+/**
+ * Hides all start-related UI elements.
+ * @function displayNoneStart
+ * @since 0.1.0
+ */
 function displayNoneStart() {
     document.getElementById("startButton").style.display = "none";
     document.getElementById("controlsButton").style.display = "none";
     document.getElementById("startImage").style.display = "none";
 }
 
+/**
+ * Initializes the game by loading the level and creating a new game world.
+ * @function init
+ * @since 0.1.0
+ */
 function init() {
     initLevel1();
     canvas = document.getElementById("canvas");
@@ -53,20 +77,40 @@ function init() {
     console.log('My Character is', world.character);
 }
 
+/**
+ * Starts playing the background music.
+ * @function playBackgroundMusic
+ * @since 0.1.0
+ */
 function playBackgroundMusic() {
     window.backgroundMusic.play();
 }
 
+/**
+ * Shows the controls and hides the start screen.
+ * @function viewControls
+ * @since 0.1.0
+ */
 function viewControls() {
     document.getElementById("startScreen").style.display = "none";
     document.getElementById("footer").style.display = "block";
 }
 
+/**
+ * Hides the controls and shows the start screen.
+ * @function closeControls
+ * @since 0.1.0
+ */
 function closeControls() {
     document.getElementById("startScreen").style.display = "flex";
     document.getElementById("footer").style.display = "none";
 }
 
+/**
+ * Toggles the game canvas between windowed and full screen mode.
+ * @function fullscreen
+ * @since 0.1.0
+ */
 function fullscreen() {
     if (document.fullscreenElement) {
         document.exitFullscreen();
@@ -77,6 +121,11 @@ function fullscreen() {
     }
 }
 
+/**
+ * Requests to enter full screen mode for the given element.
+ * @param {Element} element The element to enter full screen mode.
+ * @since 0.1.0
+ */
 function enterFullscreen(element) {
     if (element.requestFullscreen) {
         element.requestFullscreen();
@@ -87,6 +136,11 @@ function enterFullscreen(element) {
     }
 }
 
+/**
+ * Exits full screen mode for the whole document.
+ * @function exitFullscreen
+ * @since 0.1.0
+ */
 function exitFullscreen() {
     if (document.exitFullscreen) {
         document.exitFullscreen();
@@ -97,6 +151,11 @@ function exitFullscreen() {
 
 let soundMuted = false;
 
+/**
+ * Toggles the game music between play and mute.
+ * @function toggleMusic
+ * @since 0.1.0
+ */
 function toggleMusic() {
     if (soundMuted) {
         play();
@@ -108,6 +167,11 @@ function toggleMusic() {
     soundMuted = !soundMuted;
 }
 
+/**
+ * Mutes all sounds in the game.
+ * @function mute
+ * @since 0.1.0
+ */
 function mute() {
     if (!world.character) return;
     let sounds = [
@@ -121,6 +185,11 @@ function mute() {
     });
 }
 
+/**
+ * Unmutes all sounds in the game.
+ * @function play
+ * @since 0.1.0
+ */
 function play() {
     if (!world.character) return;
     let sounds = [
@@ -182,18 +251,45 @@ window.addEventListener("keyup", (e) => {
     }
 })
 
+/**
+ * Sets a tracked interval that repeatedly calls a function with a specified delay.
+ * The interval is stored globally for future reference or clearing.
+ * @function setTrackedInterval
+ * @param {Function} fn - The function to be executed repeatedly.
+ * @param {number} time - The interval time in milliseconds.
+ * @param {string} [description=''] - An optional description for the interval.
+ * @returns {number} The ID of the created interval.
+ */
 function setTrackedInterval(fn, time, description = '') {
     const id = setInterval(fn, time);
     globalIntervals.push({ id, description });
     return id;
 }
 
+/**
+ * Sets a tracked timeout that calls a function once with a specified delay.
+ * The timeout is stored globally for future reference or clearing.
+ * @function setTrackedTimeout
+ * @param {Function} fn - The function to be executed once.
+ * @param {number} time - The delay time in milliseconds.
+ * @param {string} [description=''] - An optional description for the timeout.
+ * @returns {number} The ID of the created timeout.
+ */
 function setTrackedTimeout(fn, time, description = '') {
     const id = setTimeout(fn, time);
     globalTimeouts.push({ id, description });
     return id;
 }
 
+/**
+ * Clears all tracked intervals and timeouts.
+ * This function iterates over all stored interval and timeout IDs,
+ * clears them using clearInterval and clearTimeout respectively,
+ * and then resets the global storage arrays to an empty state.
+ * It ensures that no pending intervals or timeouts remain active.
+ * @function clearAllTrackedTimers
+ * @since 0.1.0
+ */
 function clearAllTrackedTimers() {
     globalIntervals.forEach(timer => {
         clearInterval(timer.id);
@@ -203,8 +299,4 @@ function clearAllTrackedTimers() {
     });
     globalIntervals.length = 0;
     globalTimeouts.length = 0;
-}
-
-function stopAllAnimations() {
-
 }

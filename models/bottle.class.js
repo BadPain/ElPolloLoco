@@ -9,6 +9,11 @@ class Bottles extends MovableObject {
         left: 15
     }
 
+    /**
+     * Constructor for the Bottles class.
+     * 
+     * Loads the image for the bottle and assigns a random x value between 0 and 500.
+     */
     constructor() {
         super().loadImage('./img/main/7_statusbars/3_icons/icon_salsa_bottle.png');
         this.x = 0 + Math.random() * 500;

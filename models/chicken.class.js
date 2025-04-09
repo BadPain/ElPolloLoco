@@ -19,6 +19,18 @@ class Chicken extends MovableObject {
         'img/main/3_enemies_chicken/chicken_normal/2_dead/dead.png'
     ]
 
+    /**
+     * Constructor for Chicken objects.
+     * @constructor
+     * @param {number} x - The x-coordinate of the chicken.
+     * @param {number} y - The y-coordinate of the chicken.
+     * @param {number} width - The width of the chicken.
+     * @param {number} height - The height of the chicken.
+     * @param {number} speed - The speed of the chicken.
+     * @param {boolean} isDead - Whether the chicken is dead or not.
+     * @param {Array<string>} IMAGES_WALKING - The images of the chicken walking.
+     * @param {Array<string>} IMAGES_DEAD - The images of the chicken dead.
+     */
     constructor() {
         super().loadImage('img/main/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -31,6 +43,11 @@ class Chicken extends MovableObject {
         this.isDead = false;
     }
 
+    /**
+     * Initiates the animation intervals for the chicken.
+     * The chicken moves left and plays walking animations at specified intervals,
+     * unless the chicken is dead or has moved beyond the left boundary.
+     */
     animate() {
         this.moveInterval = setTrackedInterval(() => {
             if (!this.isDead && this.x > -1000) {
