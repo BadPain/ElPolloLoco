@@ -39,16 +39,6 @@ body
     background-color: white;
 }
 
-.bodyIMG {
-    height: 500px;
-    width: 800px;
-    margin-top: 100px;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    justify-content: center;
-}
-
 a, a:visited, a:active {
     color: #0095dd;
     text-decoration: none;

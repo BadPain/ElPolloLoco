@@ -51,7 +51,7 @@ class DrawableObject {
         if (this instanceof Character || this instanceof Chicken || this instanceof Coin || this instanceof Bottles) {
             ctx.beginPath();
             ctx.lineWidth = '2';
-            ctx.strokeStyle = 'blue';
+            ctx.strokeStyle = 'transparent';
             ctx.rect(this.x, this.y, this.width, this.height);
             ctx.stroke();
         }
@@ -67,7 +67,7 @@ class DrawableObject {
         if (this instanceof Character || this instanceof Chicken || this instanceof Coin || this instanceof Bottles) {
             ctx.beginPath();
             ctx.lineWidth = '1';
-            ctx.strokeStyle = 'red';
+            ctx.strokeStyle = 'transparent';
             const { adjustedX, adjustedY, adjustedWidth, adjustedHeight } = this.adjustOffsetFrame();
             ctx.rect(adjustedX, adjustedY, adjustedWidth, adjustedHeight);
             ctx.stroke();

@@ -241,7 +241,6 @@ class World {
             let bottle = this.throwableObjects[0];
             if (this.boss.energy <= 0) {
                 this.boss.isDead = true;
-                console.log('Boss ist tot!');
                 return;
             }
             this.level.enemies.forEach(enemy => {
