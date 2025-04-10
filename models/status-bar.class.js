@@ -10,12 +10,6 @@ class StatusBar extends DrawableObject {
 
     percentage = 100;
 
-    /**
-     * Creates a new StatusBar instance.
-     * Loads the images from the IMAGES array into the imageCache object.
-     * Sets the initial position, width and height of the status bar.
-     * Sets the initial percentage of the status bar to 100%
-     */
     constructor() {
         super();
         this.loadImages(this.IMAGES);
@@ -26,23 +20,12 @@ class StatusBar extends DrawableObject {
         this.setPercentage(100);
     }
 
-    /**
-     * Sets the percentage of the status bar to the given value.
-     * Updates the image of the status bar based on the new percentage.
-     * @param {number} percentage - The new percentage value for the status bar.
-     */
     setPercentage(percentage) {
         this.percentage = percentage;
         let path = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imageCache[path]
     }
 
-    /**
-     * Determines the index of the image to display for the status bar based on its current percentage value.
-     * The index corresponds to an image in the `IMAGES` array.
-     * 
-     * @returns {number} The index of the image to display, ranging from 0 to 5.
-     */
     resolveImageIndex() {
         if (this.percentage == 100) {
             return 5;

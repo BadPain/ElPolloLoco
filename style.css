@@ -27,12 +27,13 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding-bottom: 350px;
+    /* padding-bottom: 350px; */
     margin: auto;
 }
 
 .title {
     text-align: center;
+    display: block;
     letter-spacing: 5px;
     font-size: 60px;
     color: rgb(0, 0, 0);
@@ -52,6 +53,10 @@ body {
 }
 
 #startButton {
+    font-family: Zabars, sans-serif;
+    letter-spacing: 5px;
+    font-size: 16px;
+    font-weight: lighter;
     position: absolute;
     top: 25px;
     right: 50px;
@@ -64,6 +69,10 @@ body {
 }
 
 #controlsButton {
+    font-family: Zabars, sans-serif;
+    letter-spacing: 5px;
+    font-size: 16px;
+    font-weight: lighter;
     position: absolute;
     top: 25px;
     left: 50px;
@@ -73,6 +82,68 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+#impressum {
+    font-family: Zabars, sans-serif;
+    letter-spacing: 5px;
+    font-size: 16px;
+    font-weight: lighter;
+    position: absolute;
+    top: 425px;
+    left: 190px;
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#impressumScreen {
+    position: absolute;
+    top: 250;
+    left: 150;
+    width: 720px;
+    height: 480px;
+    background: transparent;
+}
+
+#impressumScreen iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.impressumContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 420px;
+    margin: 0;
+    scrollbar-width: none;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#closeImpressum {
+    font-family: Zabars, sans-serif;
+    letter-spacing: 5px;
+    font-size: 16px;
+    font-weight: lighter;
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    position: fixed;
+    top: 350px;
+}
+
+.hidden {
+    display: none;
 }
 
 
@@ -136,6 +207,9 @@ canvas {
 }
 
 #closeControls {
+    font-family: Zabars, sans-serif;
+    letter-spacing: 5px;
+    font-size: 16px;
     background-color: #4CAF50;
     color: #fff;
     padding: 10px 20px;

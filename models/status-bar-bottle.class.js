@@ -10,14 +10,6 @@ class BottleBar extends DrawableObject {
 
     percentage = 0;
 
-    /**
-     * Creates an instance of BottleBar.
-     * Loads the images for the bottle status bar,
-     * sets the initial position and size of the bar,
-     * and sets the initial percentage of the bar to 0.
-     * @param {number} [totalBottles=10] - The total number of bottles
-     * to be collected. Defaults to 10.
-     */
     constructor() {
         super();
         this.loadImages(this.IMAGES);
@@ -30,12 +22,6 @@ class BottleBar extends DrawableObject {
         this.collectedBottles = 0;
     }
 
-    /**
-     * Sets the percentage of the bottle bar based on the number of bottles collected and the total number of bottles.
-     * Updates the image of the bottle bar accordingly.
-     * @param {number} collectedBottles - The number of bottles collected.
-     * @param {number} totalBottles - The total number of bottles.
-     */
     setPercentage(collectedBottles, totalBottles) {
         this.collectedBottles = collectedBottles;
         this.totalBottles = totalBottles;
@@ -44,12 +30,6 @@ class BottleBar extends DrawableObject {
         this.img = this.imageCache[path];
     }
 
-    /**
-     * Determines the index of the bottle bar image to display based on the current percentage.
-     * The percentage is categorized into six levels, each corresponding to a different image index.
-     * 
-     * @returns {number} The index of the image to use for the bottle bar, ranging from 0 to 5.
-     */
     bottleBar() {
         if (this.percentage == 0) {
             return 0;

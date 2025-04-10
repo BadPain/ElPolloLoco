@@ -20,22 +20,12 @@ class BossBar extends DrawableObject {
         this.setPercentage(100);
     }
 
-    /**
-     * Sets the percentage of the boss bar to the given value.
-     * Also sets the current image of the boss bar based on the given percentage.
-     * @param {number} percentage - The new percentage value for the boss bar.
-     */
     setPercentage(percentage) {
         this.percentage = percentage;
         let path = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imageCache[path]
     }
 
-    /**
-     * Calculates the index of the image to display for the boss bar based on its current percentage value.
-     * The index is used to access the correct image from the `IMAGES` array.
-     * @returns {number} The index of the image to display.
-     */
     resolveImageIndex() {
         if (this.percentage == 100) {
             return 0;

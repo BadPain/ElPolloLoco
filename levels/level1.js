@@ -1,11 +1,5 @@
 let level1;
-/**
- * Initializes the first level by creating a new Level instance and
- * populating it with all the necessary objects such as enemies, clouds,
- * background objects, coins and bottles.
- * @function initLevel1
- * @since 0.1.0
- */
+
 function initLevel1() {
     level1 = new Level(
 

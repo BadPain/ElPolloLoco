@@ -9,10 +9,6 @@ class Coin extends MovableObject {
         left: 10
     }
 
-    /**
-     * Constructor for the Coin class.
-     * Initializes a coin object with a random x-coordinate and loads the coin image.
-     */
     constructor() {
         super().loadImage('img/main/7_statusbars/3_icons/icon_coin.png');
         this.x = 0 + Math.random() * 500;

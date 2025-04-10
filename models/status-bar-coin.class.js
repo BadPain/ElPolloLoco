@@ -10,12 +10,6 @@ class CoinBar extends DrawableObject {
 
     percentage = 0;
 
-    /**
-     * Constructor for the CoinBar class.
-     * Initializes the coin bar with its images, position, dimensions, and initial percentage.
-     * Loads the images for the coin bar and sets the initial position on the canvas.
-     * Sets the initial total and collected coins for the bar.
-     */
     constructor() {
         super();
         this.loadImages(this.IMAGES);
@@ -28,12 +22,6 @@ class CoinBar extends DrawableObject {
         this.collectedCoins = 0;
     }
 
-    /**
-     * Sets the percentage of the coin bar based on the number of coins collected and the total number of coins.
-     * Updates the image of the coin bar accordingly.
-     * @param {number} collectedCoins - The number of coins collected.
-     * @param {number} totalCoins - The total number of coins.
-     */
     setPercentage(collectedCoins, totalCoins) {
         this.collectedCoins = collectedCoins;
         this.totalCoins = totalCoins;
@@ -42,11 +30,6 @@ class CoinBar extends DrawableObject {
         this.img = this.imageCache[path];
     }
 
-    /**
-     * Returns the index of the coin bar image based on the percentage of coins collected.
-     * The index is calculated by dividing the percentage by 20 and rounding down to the nearest whole number.
-     * @returns {number} The index of the coin bar image corresponding to the percentage of coins collected.
-     */
     pickUpCoin() {
         return Math.floor(this.percentage / 20);
     }

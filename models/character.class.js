@@ -77,13 +77,6 @@ class Character extends MovableObject {
 
     world;
 
-    /**
-     * Constructor for Character class.
-     * Initializes the character with the specified sprites and assigns its world.
-     * Sets the initial values for the character's position, speed, width, height, and energy.
-     * Applies gravity to the character and loads its walking and jumping sounds.
-     * Calls the animate function to start animating the character and sets the idle time to 0.
-     */
     constructor() {
         super().loadImage('img/main/2_character_pepe/2_walk/W-21.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -93,98 +86,128 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONGIDLE);
         this.applyGravity();
-        this.walking_sound = new Audio('audio/walk_new3.mp3');
-        this.jumping_sound = new Audio('audio/jipii3.mp3');
-        this.walking_sound.volume = 0.3;
-        this.jumping_sound.volume = 0.1;
         this.animate();
         this.isFallingDown();
         this.idleTime = 0;
         this.energy = 100;
+        this.walkingSoundPlaying = false;
+        this.canJump = true;
+        this.groundLevel = 278;
     }
 
-    /**
-     * Initiates the animation intervals for the character.
-     * The character moves left and right at specified intervals and plays walking animations,
-     * unless the character is dead or has moved beyond the left boundary.
-     * The character also plays jumping animations when jumping.
-     * The smartphone controls are updated every 2.5 seconds.
-     */
     animate() {
         setTrackedInterval(() => this.handleMovement(), 1000 / 60, 'Pepe Movement');
         setTrackedInterval(() => this.handleAnimation(), 100, 'Pepe Animation');
         setTrackedInterval(() => smartphoneControls(), 2500, 'Pepe Controls');
     }
 
-    /**
-     * Handles the character's movement based on keyboard input.
-     * 
-     * Pauses and resumes the walking sound based on movement direction.
-     * Moves the character right or left if the corresponding keys are pressed,
-     * ensuring the character stays within the game boundaries.
-     * Initiates a jump if the spacebar is pressed and the character is on the ground,
-     * playing the jumping sound.
-     * Adjusts the camera position relative to the character's x-coordinate.
-     */
     handleMovement() {
-        this.walking_sound.pause();
+        this.checkIfCanJump();
+        this.charWalk();
+        this.charJump();
+        this.handleCamera();
+    }
+
+    checkIfCanJump() {
+        if (!this.world.keyboard.SPACE && this.isOnGround()) {
+            this.canJump = true;
+        }
+    }
+
+    charWalk() {
+        if (!this.world.keyboard.RIGHT && !this.world.keyboard.LEFT) {
+            this.walkingSoundPlaying = false;
+        }
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
             this.otherDirection = false;
-            this.walking_sound.play();
+            this.playWalkingSoundOnce();
         }
         if (this.world.keyboard.LEFT && this.x > -1000) {
             this.moveLeft();
             this.otherDirection = true;
-            this.walking_sound.play();
+            this.playWalkingSoundOnce();
         }
-        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+    }
+
+    charJump() {
+        if (this.world.keyboard.SPACE && this.isOnGround() && this.canJump) {
+            this.canJump = false;
             this.jump();
-            this.jumping_sound.play();
+            soundManager.play('jump');
         }
+    }
+
+    handleCamera() {
         this.world.camera_x = -this.x + 100;
     }
 
-    /**
-     * Handles the character's animations based on its state and keyboard input.
-     * 
-     * If the character is dead, plays the death animation and triggers the game over screen.
-     * If the character is hurt, plays the hurt animation.
-     * If the character is jumping, plays the jumping animation.
-     * If the character is walking, plays the walking animation.
-     * If the character is idle, plays the idle animation or the long idle animation after 10 seconds.
-     * 
-     * @returns {void} No return value
-     */
     handleAnimation() {
         if (this.hasLose) return;
+        if (this.charIsDead()) return;
+        if (this.charIsHurt()) return;
+        if (this.charIsJumping()) return;
+        if (this.charIsWalking()) return;
+        this.charIsIdle();
+    }
 
+    charIsDead() {
         if (this.isDead()) {
             this.hasLose = true;
             this.playAnimation(this.IMAGES_DEAD);
             setTrackedTimeout(() => {
                 this.world.toLoseAGame();
+                gameIsRunning = false;
             }, 1000, 'Pepe Died!');
             this.idleTime = 0;
-        } else if (this.isHurt()) {
+        }
+    }
+
+    charIsHurt() {
+        if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
             this.idleTime = 0;
-        } else if (this.isAboveGround()) {
+            return true;
+        }
+        return false;
+    }
+
+    charIsJumping() {
+        if (this.isAboveGround()) {
             this.playAnimation(this.IMAGES_JUMPING);
             if (this.currentImage >= 3 && this.speedY > 0) {
                 this.currentImage = 3;
             }
             this.idleTime = 0;
-        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            return true;
+        }
+        return false;
+    }
+
+    charIsWalking() {
+        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
             this.playAnimation(this.IMAGES_WALKING);
             this.idleTime = 0;
-        } else if (this.isOnGround()) {
+            return true;
+        }
+        return false;
+    }
+
+    charIsIdle() {
+        if (this.isOnGround()) {
             this.idleTime += 100;
             if (this.idleTime >= 10000) {
                 this.playAnimation(this.IMAGES_LONGIDLE, 10);
             } else {
                 this.playAnimation(this.IMAGES_IDLE);
             }
+        }
+    }
+
+    playWalkingSoundOnce() {
+        if (!this.walkingSoundPlaying) {
+            soundManager.play('walking');
+            this.walkingSoundPlaying = true;
         }
     }
 }

@@ -19,14 +19,6 @@ class SmallChicken extends MovableObject {
         'img/main/3_enemies_chicken/chicken_small/2_dead/dead.png'
     ]
 
-    /**
-     * Constructor for SmallChicken objects.
-     * Initializes the SmallChicken with a random x position between 1750 and 3500,
-     * and a random speed between 0.15 and 0.65.
-     * Loads the walking animations for the chicken.
-     * Sets the initial state of the chicken to be not dead.
-     * Calls the animate function to start animating the chicken.
-     */
     constructor() {
         super().loadImage('img/main/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -38,11 +30,6 @@ class SmallChicken extends MovableObject {
         this.isDead = false;
     }
 
-    /**
-     * Initiates the animation intervals for the small chicken.
-     * The small chicken moves left and plays walking animations at specified intervals,
-     * unless the small chicken is dead or has moved beyond the left boundary.
-     */
     animate() {
         this.moveInterval = setTrackedInterval(() => {
             if (!this.isDead && this.x > -1000) {

@@ -27,12 +27,12 @@
     <script src="models/level.class.js"></script>
     <script src="models/throwable-object.class.js"></script>
     <script src="models/endboss.class.js"></script>
+    <script src="models/sound-manager.class.js"></script>
     <script src="levels/level1.js"></script>
     <script src="js/game.js" defer></script>
     <script src="js/mobile-controls.js"></script>
     <script src="js/swap-phone.js"></script>
-
-    <audio id="music" src="audio/backgroundmusic.mp3" loop></audio>
+    <script src="js/template-impressum.js"></script>
 
     <title>El pollo loco</title>
 </head>
@@ -40,7 +40,7 @@
 <body id="body">
     <div id="container" class="container">
 
-        <h1 class="title">El pollo loco</h1>
+        <h1 id="title" class="title">El pollo loco</h1>
         <div id="startScreen">
             <img id="startImage" class="startImage" src="img/main/9_intro_outro_screens/start/startscreen_1.png" alt="">
             <img id="toWinAGame" class="toWinAGame" src="img/main/9_intro_outro_screens/youWin/youWin.png" alt="">
@@ -48,6 +48,7 @@
             <button id="restartButton" onclick="toRestartAGame()">RESTART</button>
             <button id="startButton" onclick="toStartAGame()">START</button>
             <button id="controlsButton" onclick="viewControls()">CONTROLS</button>
+            <button id="impressum" onclick="viewImpressum()">IMPRESSUM</button>
         </div>
         <div class="panelMain" id="panelMain">
             <button id="muteMusicButton" onclick="toggleMusic()"></button>
@@ -56,6 +57,7 @@
         <canvas id="canvas" width="720" height="480">
 
         </canvas>
+        <div id="impressumScreen" class="hidden"></div>
         <div id="swapYourPhone" style="display: none;">
             <img src="img/swapYourPhone.gif" alt="Bitte drehen" />
         </div>

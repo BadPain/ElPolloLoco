@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muster-Impressum</title>
-    <link rel="stylesheet" href="style-impressum.css">
-</head>
-<body>
+function impressumTemplate() {
+    return ` 
+    <section class="impressumContainer">
     <h1>Impressum</h1>
 <p>Max Mustermann<br />
 Musterbezeichnung<br />
@@ -25,8 +19,7 @@ Impressum.</p>
 teilzunehmen.</p>
 <p>Quelle: <a href="https://www.e-recht24.de/impressum-generator.html">https://www.e-recht24.de/impressum-
 generator.html</a></p>
-
+</section>
 <button id="closeImpressum" onclick="closeImpressum()">CLOSE</button>
-</body>
-
-</html>
+`
+}
