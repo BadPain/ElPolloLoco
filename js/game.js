@@ -17,6 +17,10 @@ function toStartAGame() {
 }
 
 function toRestartAGame() {
+    if (world && world.wasSoundMutedByEndscreen) {
+        window.soundManager.soundMuted = false;
+        window.soundManager.updateMuteStatus();
+    }
     document.getElementById("toWinAGame").style.display = "none";
     document.getElementById("toLoseAGame").style.display = "none";
     document.getElementById("restartButton").style.display = "none";
@@ -67,7 +71,7 @@ function closeControls() {
 
 function viewImpressum() {
     document.getElementById("startScreen").style.display = "none";
-    document.getElementById("footer").style.display = "none";
+    // document.getElementById("footer").style.display = "none";
     document.getElementById("muteMusicButton").style.display = "none";
     document.getElementById("fullscreen").style.display = "none";
     document.getElementById('title').style.display = "none";
@@ -82,7 +86,7 @@ function closeImpressum() {
     container.innerHTML = "";
     document.getElementById("impressumScreen").classList.add("hidden");
     document.getElementById("startScreen").style.display = "flex";
-    document.getElementById("footer").style.display = "block";
+    // document.getElementById("footer").style.display = "block";
     document.getElementById("muteMusicButton").style.display = "block";
     document.getElementById('title').style.display = "block";
     document.getElementById("fullscreen").style.display = "block";
@@ -163,7 +167,7 @@ window.addEventListener("keyup", (e) => {
     if (e.keyCode == 37) { keyboard.LEFT = false; }
     if (e.keyCode == 38) { keyboard.UP = false; }
     if (e.keyCode == 40) { keyboard.DOWN = false; }
-    if (e.keyCode == 32) { keyboard.SPACE = false;}
+    if (e.keyCode == 32) { keyboard.SPACE = false; }
     if (e.keyCode == 68) { keyboard.D = false; }
     if (e.keyCode == 27) { keyboard.ESCAPE = false; }
 })

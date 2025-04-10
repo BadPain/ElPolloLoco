@@ -135,7 +135,7 @@ class World {
             normal: 'img/main/3_enemies_chicken/chicken_normal/2_dead/dead.png',
             small: 'img/main/3_enemies_chicken/chicken_small/2_dead/dead.png'
         };
-    
+
         if (chicken instanceof SmallChicken) {
             chicken.loadImage(IMAGES_DEAD.small);
         } else {
@@ -424,10 +424,22 @@ class World {
     toWinAGame() {
         document.getElementById("toWinAGame").style.display = "block";
         document.getElementById("restartButton").style.display = "block";
+        document.getElementById("footer").style.display = "none";
+        if (!window.soundManager.isMuted()) {
+            this.wasSoundMutedByEndscreen = true;
+            window.soundManager.soundMuted = true;
+            window.soundManager.updateMuteStatus();
+        }
     }
 
     toLoseAGame() {
         document.getElementById("toLoseAGame").style.display = "block";
         document.getElementById("restartButton").style.display = "block";
+        document.getElementById("footer").style.display = "none";
+        if (!window.soundManager.isMuted()) {
+            this.wasSoundMutedByEndscreen = true;
+            window.soundManager.soundMuted = true;
+            window.soundManager.updateMuteStatus();
+        }
     }
 }
