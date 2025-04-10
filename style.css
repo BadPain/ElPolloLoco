@@ -1,14 +1,13 @@
-
 @font-face {
     font-family: Zabars;
     src: url(fonts/ZABARS/Zabars.ttf);
 }
 
-:not(:root):fullscreen::backdrop {
+/* :not(:root):fullscreen::backdrop {
     background-image: url('./img/desert.jpg');
     background-size: cover;
-    background-repeat: no-repeat;
-}
+    background-repeat: repeat;
+} */
 
 body {
     font-family: Zabars, sans-serif;
@@ -18,9 +17,14 @@ body {
     flex-direction: column;
     background-image: url('./img/desert.jpg');
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     height: 100vh;
     margin: 0;
+}
+
+canvas {
+    display: none;
+    background-color: black;
 }
 
 .container {
@@ -58,20 +62,46 @@ body {
     height: 480px;
 }
 
-#startButton {
+.buttons {
+    /* display: flex;
+    justify-content: space-between;
+    width: 700px;
+    margin-top: 15px; */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 100px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.buttons button {
     font-family: Zabars, sans-serif;
     letter-spacing: 5px;
     font-size: 16px;
     font-weight: lighter;
-    position: absolute;
-    top: 25px;
-    right: 50px;
     background-color: #4CAF50;
     color: #fff;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    z-index: 10;
+}
+
+/* #startButton {
+    font-family: Zabars, sans-serif;
+    letter-spacing: 5px;
+    font-size: 16px;
+    font-weight: lighter;
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10;
 }
 
 #controlsButton {
@@ -79,15 +109,13 @@ body {
     letter-spacing: 5px;
     font-size: 16px;
     font-weight: lighter;
-    position: absolute;
-    top: 25px;
-    left: 50px;
     background-color: #4CAF50;
     color: #fff;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    z-index: 10;
 }
 
 #impressum {
@@ -95,16 +123,14 @@ body {
     letter-spacing: 5px;
     font-size: 16px;
     font-weight: lighter;
-    position: absolute;
-    top: 425px;
-    left: 190px;
     background-color: #4CAF50;
     color: #fff;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-}
+    z-index: 10;
+} */
 
 #impressumScreen {
     position: relative;
@@ -145,7 +171,8 @@ body {
     border-radius: 5px;
     cursor: pointer;
     position: fixed;
-    top: 350px;
+    left: 550px;
+    top: 450px;
 }
 
 .hidden {
@@ -155,11 +182,6 @@ body {
 
 #start-button:hover {
     background-color: #3e8e41;
-}
-
-canvas {
-    display: none;
-    background-color: black;
 }
 
 #controls {
@@ -247,7 +269,7 @@ canvas {
     position: absolute;
     width: 720px;
     height: 480px;
-    top: 245px;
+    top: 260px;
     display: none;
 }
 
@@ -255,7 +277,7 @@ canvas {
     position: absolute;
     width: 720px;
     height: 480px;
-    top: 245px;
+    top: 260px;
     display: none;
 }
 

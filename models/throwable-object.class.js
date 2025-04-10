@@ -40,9 +40,9 @@ class ThrowableObject extends MovableObject {
         this.speedY = -10;
         this.applyGravity();
         setTrackedInterval(() => {
-            this.x += 5;
+            this.x += 10;
             this.y += this.speedY;
-            this.speedY -= 2;
+            this.speedY -= 2.5;
         }, 25, 'ThrowInterval');
     }
 

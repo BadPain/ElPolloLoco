@@ -38,50 +38,53 @@
     <title>El pollo loco</title>
 </head>
 
-<body id="body">
+<body id="body" class="body">
     <div id="container" class="container">
 
         <h1 id="title" class="title">El pollo loco</h1>
-        <div id="startScreen">
+        <div id="startScreen" class="startScreen">
             <img id="startImage" class="startImage" src="img/main/9_intro_outro_screens/start/startscreen_1.png" alt="">
             <img id="toWinAGame" class="toWinAGame" src="img/main/9_intro_outro_screens/youWin/youWin.png" alt="">
             <img id="toLoseAGame" class="toLoseAGame" src="img/main/9_intro_outro_screens/game_over/youLost.png" alt="">
-            <button id="restartButton" onclick="toRestartAGame()">RESTART</button>
-            <button id="startButton" onclick="toStartAGame()">START</button>
-            <button id="controlsButton" onclick="viewControls()">CONTROLS</button>
-            <button id="impressum" onclick="viewImpressum()">IMPRESSUM</button>
+            <button id="restartButton" class="restartButton" onclick="toRestartAGame()">RESTART</button>
+            <div id="buttons" class="buttons">
+                <button id="startButton" class="startButton" onclick="toStartAGame()">START</button>
+                <button id="controlsButton" class="controlsButton" onclick="viewControls()">CONTROLS</button>
+                <button id="impressum" class="impressum" onclick="viewImpressum()">IMPRESSUM</button>
+            </div>
         </div>
         <div class="panelMain" id="panelMain">
-            <button id="muteMusicButton" onclick="toggleMusic()"></button>
-            <button id="fullscreen" onclick="fullscreen()"></button>
+            <button id="muteMusicButton" class="muteMusicButton" onclick="toggleMusic()"></button>
+            <button id="fullscreen" class="fullscreen" onclick="fullscreen()"></button>
         </div>
         <canvas id="canvas" width="720" height="480">
 
         </canvas>
         <div id="impressumScreen" class="hidden"></div>
-        <div id="swapYourPhone" style="display: none;">
+        <div id="swapYourPhone" class="swapYourPhone" style="display: none;">
             <img src="img/swapYourPhone.gif" alt="Bitte drehen" />
         </div>
-        <div id="controls">
-            <div id="hud">
+        <div id="controls" class="controls">
+            <div id="hud" class="hud">
                 <div id="panel" class="panel">
-                    <div id="panel-wrapper-left">
+                    <div id="panel-wrapper-left" class="panel-wrapper-left">
                         <button id="btnLeft">&lt;</button>
                         <button id="btnRight">&gt;</button>
                     </div>
-                    <div id="panel-wrapper-right">
+                    <div id="panel-wrapper-right" class="panel-wrapper-right">
                         <button id="btnJump">&uarr;</button>
                         <button id="btnThrow">&#129524;</button>
                     </div>
-                    <div id="panel-wrapper-top">
-                        <button id="muteMusikcButtonSmart" onclick="toggleMusic()">&#128264</button>
+                    <div id="panel-wrapper-top" class="panel-wrapper-top">
+                        <button id="muteMusikcButtonSmart" class="muteMusikcButtonSmart"
+                            onclick="toggleMusic()">&#128264</button>
                     </div>
                 </div>
             </div>
         </div>
         <div id="footer" class="footer">
             <div class="footerInfo">
-                <button id="closeControls" onclick="closeControls()">CLOSE CONTROLS</button>
+                <button id="closeControls" class="closeControls" onclick="closeControls()">CLOSE CONTROLS</button>
                 <p>Pfeiltasten: Bewegen den Charakter</p>
                 <p>Leertaste: Springen</p>
                 <p>Taste D: Flasche werfen</p>

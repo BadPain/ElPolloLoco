@@ -165,7 +165,7 @@ class Endboss extends MovableObject {
     }
 
     checkAttackTrigger() {
-        if (this.isBossActivated && (this.energy > 0) && !this.isAttacking && Math.abs(this.x - world.character.x) < 150) {
+        if (this.isBossActivated && (this.energy > 0) && !this.isAttacking && Math.abs(this.x - world.character.x) < 30) {
             this.isAttacking = true;
             this.bossIsWalking = false;
             setTrackedTimeout(() => {

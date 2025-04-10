@@ -71,7 +71,6 @@ function closeControls() {
 
 function viewImpressum() {
     document.getElementById("startScreen").style.display = "none";
-    // document.getElementById("footer").style.display = "none";
     document.getElementById("muteMusicButton").style.display = "none";
     document.getElementById("fullscreen").style.display = "none";
     document.getElementById('title').style.display = "none";
@@ -86,7 +85,6 @@ function closeImpressum() {
     container.innerHTML = "";
     document.getElementById("impressumScreen").classList.add("hidden");
     document.getElementById("startScreen").style.display = "flex";
-    // document.getElementById("footer").style.display = "block";
     document.getElementById("muteMusicButton").style.display = "block";
     document.getElementById('title').style.display = "block";
     document.getElementById("fullscreen").style.display = "block";
